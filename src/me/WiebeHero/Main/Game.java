@@ -4,15 +4,17 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 
 import me.WiebeHero.Display.Display;
+import me.WiebeHero.Input.KeyManager;
 import me.WiebeHero.States.GameState;
 import me.WiebeHero.States.MenuState;
 import me.WiebeHero.States.State;
 import me.WiebeHero.gfx.Assets;
+import me.WiebeHero.gfx.GameCamera;
 
 public class Game implements Runnable{
 	
 	private Display display;
-	public int width, height;
+	private int width, height;
 	public String title;
 	
 	private boolean running = false;
@@ -25,21 +27,36 @@ public class Game implements Runnable{
 	private State gameState;
 	private State menuState;
 	
+	//Input
+	private KeyManager keyManager;
+	
+	//Camera
+	private GameCamera gameCamera;
+	
+	//Handler
+	private Handler handler;
+	
 	public Game(String title, int width, int height) {
 		this.width = width;
 		this.height = height;
 		this.title = title;
+		this.keyManager = new KeyManager();
 	}
 	
 	private void init() {
 		this.display = new Display(this.title, this.width, this.height);
+		this.display.getFrame().addKeyListener(this.keyManager);
 		Assets.init();
-		this.gameState = new GameState();
-		this.menuState = new MenuState();
+		this.handler = new Handler(this);
+		this.gameCamera = new GameCamera(this.handler, 0, 0);
+		this.gameState = new GameState(this.handler);
+		this.menuState = new MenuState(this.handler);
 		State.setState(this.gameState);
 	}
 	
 	private void tick() {
+		this.keyManager.tick();
+		
 		if(State.getState() != null) {
 			State.getState().tick();
 		}
@@ -90,6 +107,22 @@ public class Game implements Runnable{
 		
 		this.stop();
 		
+	}
+	
+	public KeyManager getKeyManager() {
+		return this.keyManager;
+	}
+	
+	public GameCamera getGameCamera() {
+		return this.gameCamera;
+	}
+	
+	public int getWidth() {
+		return this.width;
+	}
+	
+	public int getHeight() {
+		return this.height;
 	}
 	
 	public synchronized void start() {

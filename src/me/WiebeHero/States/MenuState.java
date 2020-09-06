@@ -2,10 +2,12 @@ package me.WiebeHero.States;
 
 import java.awt.Graphics;
 
+import me.WiebeHero.Main.Handler;
+
 public class MenuState extends State{
 
-	public MenuState() {
-		
+	public MenuState(Handler handler) {
+		super(handler);
 	}
 	
 	@Override

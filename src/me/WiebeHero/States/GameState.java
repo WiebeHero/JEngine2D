@@ -2,23 +2,32 @@ package me.WiebeHero.States;
 
 import java.awt.Graphics;
 
-import me.WiebeHero.gfx.Assets;
+import me.WiebeHero.Entities.Player;
+import me.WiebeHero.Main.Handler;
+import me.WiebeHero.Worlds.World;
 
 public class GameState extends State{
+	
+	private Player player;
+	private World world;
 
-	public GameState() {
-		
+	public GameState(Handler handler) {
+		super(handler);
+		this.world = new World(this.handler, "res/worlds/MainWorld.txt");
+		this.handler.setWorld(this.world);
+		this.player = new Player(this.handler, 100.0F, 100.0F);
 	}
 	
 	@Override
 	public void tick() {
-		// TODO Auto-generated method stub
-		
+		this.world.tick();
+		this.player.tick();
 	}
 
 	@Override
 	public void render(Graphics g) {
-		g.drawImage(Assets.DIRT, 0, 0, null);
+		this.world.render(g);
+		this.player.render(g);
 	}
 
 }
