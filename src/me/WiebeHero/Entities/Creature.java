@@ -9,6 +9,7 @@ public abstract class Creature extends Entity{
 	public static final float DEFAULT_SPEED = 3.0F;
 	public static final int DEFAULT_CREATURE_WIDTH = 64, DEFAULT_CREATURE_HEIGHT = 64;
 	
+	protected Direction dir;
 	protected int health;
 	protected float speed;
 	protected float xMove, yMove;
@@ -19,6 +20,7 @@ public abstract class Creature extends Entity{
 		this.speed = DEFAULT_SPEED;
 		this.xMove = 0.0F;
 		this.yMove = 0.0F;
+		this.dir = Direction.DOWN;
 	}
 	
 	public void move() {
@@ -37,7 +39,7 @@ public abstract class Creature extends Entity{
 			else {
 				this.x = tx * Tile.TILEWIDTH - this.bounds.x - this.bounds.width - 1;
 			}
-			
+			this.dir = Direction.RIGHT;
 		}
 		else if(this.xMove < 0) {//Moving Left
 			int tx = (int) (this.x + this.xMove + this.bounds.x) / Tile.TILEWIDTH;
@@ -49,6 +51,7 @@ public abstract class Creature extends Entity{
 			else {
 				this.x = tx * Tile.TILEWIDTH + Tile.TILEWIDTH - this.bounds.x;
 			}
+			this.dir = Direction.LEFT;
 		}
 	}
 	
@@ -63,6 +66,7 @@ public abstract class Creature extends Entity{
 			else {
 				this.y = ty * Tile.TILEHEIGHT + Tile.TILEHEIGHT - this.bounds.y;
 			}
+			this.dir = Direction.UP;
 		}
 		else if(this.yMove > 0) {//Moving Down
 			int ty = (int)(this.y + this.yMove + this.bounds.y + this.bounds.height) / Tile.TILEHEIGHT;
@@ -74,6 +78,7 @@ public abstract class Creature extends Entity{
 			else {
 				this.y = ty * Tile.TILEHEIGHT - this.bounds.y - this.bounds.height - 1;
 			}
+			this.dir = Direction.DOWN;
 		}
 	}
 	
@@ -112,6 +117,10 @@ public abstract class Creature extends Entity{
 
 	public void setSpeed(float speed) {
 		this.speed = speed;
+	}
+	
+	public Direction getDirection() {
+		return this.dir;
 	}
 	
 }
