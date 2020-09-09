@@ -9,16 +9,19 @@ public class Assets {
 	public static BufferedImage dirt, grass, tree;
 	public static BufferedImage[] player_up, player_down, player_left, player_right;
 	public static BufferedImage player_up_still, player_down_still, player_left_still, player_right_still;
+	public static BufferedImage[] icons;
 	
 	public static void init() {
 		SpriteSheet tileSheet = new SpriteSheet(ImageLoader.loadImage("/textures/TileSheet.png"));
 		SpriteSheet staticEntitySheet = new SpriteSheet(ImageLoader.loadImage("/sprites/StaticEntitySprite.png"));
 		SpriteSheet playerSheet = new SpriteSheet(ImageLoader.loadImage("/sprites/CharacterSprite.png"));
+		SpriteSheet iconSheet = new SpriteSheet(ImageLoader.loadImage("/icons/MenuIcons.png"));
 		
 		player_up = new BufferedImage[4];
 		player_down = new BufferedImage[4];
 		player_left = new BufferedImage[4];
 		player_right = new BufferedImage[4];
+		icons = new BufferedImage[2];
 		
 		for(int i = 0; i < 4; i++) {
 			player_down[i] = playerSheet.crop(width * i, 0, width, height);
@@ -41,6 +44,10 @@ public class Assets {
 		grass = tileSheet.crop(0, 0, width, height);
 		dirt = tileSheet.crop(0, height, width, height);
 		tree = staticEntitySheet.crop(0, 0, width, height * 2);
+		
+		for(int i = 0; i < 2; i++) {
+			icons[i] = iconSheet.crop(0, i * height * 2, width * 2, height * 2);;
+		}
 	}
 	
 }

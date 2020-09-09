@@ -4,13 +4,20 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import me.WiebeHero.UI.UIManager;
+
 public class MouseManager implements MouseListener, MouseMotionListener{
 
 	private boolean leftPressed, rightPressed;
 	private int mouseX, mouseY;
+	private UIManager uiManager;
 	
 	public MouseManager() {
 		
+	}
+	
+	public void setUIManager(UIManager uiManager) {
+		this.uiManager = uiManager;
 	}
 	
 	// Getters
@@ -43,6 +50,9 @@ public class MouseManager implements MouseListener, MouseMotionListener{
 	public void mouseMoved(MouseEvent event) {
 		this.mouseX = event.getX();
 		this.mouseY = event.getY();
+		if(this.uiManager != null) {
+			this.uiManager.onMouseMove(event);
+		}
 	}
 
 	@Override
@@ -80,6 +90,9 @@ public class MouseManager implements MouseListener, MouseMotionListener{
 		}
 		else if(event.getButton() == MouseEvent.BUTTON3) {
 			this.rightPressed = false;
+		}
+		if(this.uiManager != null) {
+			this.uiManager.onMouseRelease(event);
 		}
 	}
 
