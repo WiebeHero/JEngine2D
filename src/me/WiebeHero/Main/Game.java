@@ -5,6 +5,7 @@ import java.awt.image.BufferStrategy;
 
 import me.WiebeHero.Display.Display;
 import me.WiebeHero.Input.KeyManager;
+import me.WiebeHero.Input.MouseManager;
 import me.WiebeHero.States.GameState;
 import me.WiebeHero.States.MenuState;
 import me.WiebeHero.States.State;
@@ -24,11 +25,12 @@ public class Game implements Runnable{
 	private Graphics g;
 	
 	//States
-	private State gameState;
-	private State menuState;
+	public State gameState;
+	public State menuState;
 	
 	//Input
 	private KeyManager keyManager;
+	private MouseManager mouseManager;
 	
 	//Camera
 	private GameCamera gameCamera;
@@ -41,17 +43,22 @@ public class Game implements Runnable{
 		this.height = height;
 		this.title = title;
 		this.keyManager = new KeyManager();
+		this.mouseManager = new MouseManager();
 	}
 	
 	private void init() {
 		this.display = new Display(this.title, this.width, this.height);
 		this.display.getFrame().addKeyListener(this.keyManager);
+		this.display.getFrame().addMouseListener(this.mouseManager);
+		this.display.getFrame().addMouseMotionListener(this.mouseManager);
+		this.display.getCanvas().addMouseListener(this.mouseManager);
+		this.display.getCanvas().addMouseMotionListener(this.mouseManager);
 		Assets.init();
 		this.handler = new Handler(this);
 		this.gameCamera = new GameCamera(this.handler, 0, 0);
 		this.gameState = new GameState(this.handler);
 		this.menuState = new MenuState(this.handler);
-		State.setState(this.gameState);
+		State.setState(this.menuState);
 	}
 	
 	private void tick() {
@@ -111,6 +118,10 @@ public class Game implements Runnable{
 	
 	public KeyManager getKeyManager() {
 		return this.keyManager;
+	}
+	
+	public MouseManager getMouseManager() {
+		return this.mouseManager;
 	}
 	
 	public GameCamera getGameCamera() {

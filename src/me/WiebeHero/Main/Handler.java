@@ -1,6 +1,7 @@
 package me.WiebeHero.Main;
 
 import me.WiebeHero.Input.KeyManager;
+import me.WiebeHero.Input.MouseManager;
 import me.WiebeHero.Worlds.World;
 import me.WiebeHero.gfx.GameCamera;
 
@@ -23,6 +24,10 @@ public class Handler {
 	
 	public KeyManager getKeyManager() {
 		return this.game.getKeyManager();
+	}
+	
+	public MouseManager getMouseManager() {
+		return this.game.getMouseManager();
 	}
 	
 	public GameCamera getGameCamera() {

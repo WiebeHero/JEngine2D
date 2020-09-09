@@ -6,12 +6,13 @@ public class Assets {
 	
 	private static final int width = 32, height = 32;
 	
-	public static BufferedImage dirt, grass;
+	public static BufferedImage dirt, grass, tree;
 	public static BufferedImage[] player_up, player_down, player_left, player_right;
 	public static BufferedImage player_up_still, player_down_still, player_left_still, player_right_still;
 	
 	public static void init() {
 		SpriteSheet tileSheet = new SpriteSheet(ImageLoader.loadImage("/textures/TileSheet.png"));
+		SpriteSheet staticEntitySheet = new SpriteSheet(ImageLoader.loadImage("/sprites/StaticEntitySprite.png"));
 		SpriteSheet playerSheet = new SpriteSheet(ImageLoader.loadImage("/sprites/CharacterSprite.png"));
 		
 		player_up = new BufferedImage[4];
@@ -39,6 +40,7 @@ public class Assets {
 		
 		grass = tileSheet.crop(0, 0, width, height);
 		dirt = tileSheet.crop(0, height, width, height);
+		tree = staticEntitySheet.crop(0, 0, width, height * 2);
 	}
 	
 }

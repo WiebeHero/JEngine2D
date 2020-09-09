@@ -2,6 +2,9 @@ package me.WiebeHero.Worlds;
 
 import java.awt.Graphics;
 
+import me.WiebeHero.Entities.EntityManager;
+import me.WiebeHero.Entities.Player;
+import me.WiebeHero.Entities.StaticEntities.Tree;
 import me.WiebeHero.Main.Handler;
 import me.WiebeHero.Tiles.Tile;
 import me.WiebeHero.Utils.Utils;
@@ -12,14 +15,26 @@ public class World {
 	private int width, height;
 	private int spawnX, spawnY;
 	private int[][] tiles;
+	//ENTITIES
+	private EntityManager entityManager;
 	
 	public World(Handler handler, String path) {
 		this.handler = handler;
+		this.entityManager = new EntityManager(this.handler, new Player(this.handler, 100, 100));
+		this.entityManager.addEntity(new Tree(this.handler, 250, 250));
+		
 		this.loadWorld(path);
+		
+		this.entityManager.getPlayer().setX(this.spawnX);
+		this.entityManager.getPlayer().setY(this.spawnY);
 	}
 	
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
 	public void tick() {
-		
+		this.entityManager.tick();
 	}
 	
 	public void render(Graphics g) {
@@ -33,6 +48,8 @@ public class World {
 				this.getTile(x, y).render(g, (int) (x * Tile.TILEWIDTH - this.handler.getGameCamera().getxOffset()), (int) (y * Tile.TILEHEIGHT - this.handler.getGameCamera().getyOffset()));
 			}
 		}
+		//Entities
+		this.entityManager.render(g);
 	}
 	
 	public Tile getTile(int x, int y) {

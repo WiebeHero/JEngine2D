@@ -11,6 +11,8 @@ public class Player extends Creature{
 	
 	//Animations
 	private Animation animDown, animUp, animLeft, animRight;
+	private int normalSpeed, sprintSpeed;
+	private boolean sprinting;
 	
 	public Player(Handler handler, float x, float y) {
 		super(handler, x, y, Creature.DEFAULT_CREATURE_WIDTH, Creature.DEFAULT_CREATURE_HEIGHT);
@@ -19,12 +21,15 @@ public class Player extends Creature{
 		this.bounds.y = 32;
 		this.bounds.width = 32;
 		this.bounds.height = 32;
+		this.normalSpeed = 150;
+		this.sprintSpeed = 125;
+		this.sprinting = false;
 		
 		//Animations
-		this.animDown = new Animation(125, Assets.player_down);
-		this.animUp = new Animation(125, Assets.player_up);
-		this.animLeft = new Animation(125, Assets.player_left);
-		this.animRight = new Animation(125, Assets.player_right);
+		this.animDown = new Animation(this.normalSpeed, Assets.player_down);
+		this.animUp = new Animation(this.normalSpeed, Assets.player_up);
+		this.animLeft = new Animation(this.normalSpeed, Assets.player_left);
+		this.animRight = new Animation(this.normalSpeed, Assets.player_right);
 	}
 
 	@Override
@@ -43,18 +48,35 @@ public class Player extends Creature{
 	private void getInput() {
 		this.xMove = 0.0F;
 		this.yMove = 0.0F;
-		
+		float tempSpeed = this.speed;
+		if(this.handler.getKeyManager().sprint) {
+			tempSpeed *= 1.5;
+			if(!this.sprinting) {
+				this.animDown.setSpeed(this.sprintSpeed);
+				this.animUp.setSpeed(this.sprintSpeed);
+				this.animLeft.setSpeed(this.sprintSpeed);
+				this.animRight.setSpeed(this.sprintSpeed);
+			}
+			this.sprinting = true;
+		}
+		else if(this.sprinting) {
+			this.sprinting = false;
+			this.animDown.setSpeed(this.normalSpeed);
+			this.animUp.setSpeed(this.normalSpeed);
+			this.animLeft.setSpeed(this.normalSpeed);
+			this.animRight.setSpeed(this.normalSpeed);
+		}
 		if(this.handler.getKeyManager().up) {
-			this.yMove = -this.speed;
+			this.yMove = -tempSpeed;
 		}
 		if(this.handler.getKeyManager().down) {
-			this.yMove = this.speed;
+			this.yMove = tempSpeed;
 		}
 		if(this.handler.getKeyManager().left) {
-			this.xMove = -this.speed;
+			this.xMove = -tempSpeed;
 		}
 		if(this.handler.getKeyManager().right) {
-			this.xMove = this.speed;
+			this.xMove = tempSpeed;
 		}
 	}
 
@@ -103,4 +125,23 @@ public class Player extends Creature{
 		}
 	}
 	
+	public boolean isSprinting() {
+		return this.sprinting;
+	}
+	
+	public int getWalkAnimationSpeed() {
+		return this.normalSpeed;
+	}
+	
+	public int getSprintAnimationSpeed() {
+		return this.normalSpeed;
+	}
+	
+	public int getBoundingBoxWidth() {
+		return this.bounds.x;
+	}
+	
+	public int getBoundingBoxHeight() {
+		return this.bounds.y;
+	}
 }

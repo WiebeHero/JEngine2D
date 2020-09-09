@@ -26,6 +26,21 @@ public abstract class Entity {
 	
 	public abstract void render(Graphics g);
 	
+	public boolean checkEntityCollisions(float xOffset, float yOffset) {
+		for(Entity e : this.handler.getWorld().getEntityManager().getEntities()) {
+			if(!e.equals(this)) {
+				if(e.getCollisionBounds(0F, 0F).intersects(this.getCollisionBounds(xOffset, yOffset))) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public Rectangle getCollisionBounds(float xOffset, float yOffset) {
+		return new Rectangle((int)(this.x + this.bounds.x + xOffset), (int)(this.y + this.bounds.y + yOffset), this.bounds.width, this.bounds.height);
+	}
+	
 	public float getX() {
 		return x;
 	}

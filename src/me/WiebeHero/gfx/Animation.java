@@ -32,6 +32,12 @@ public class Animation {
 	public BufferedImage getCurrentFrame() {
 		return this.frames[this.index];
 	}
-
 	
+	public int getSpeed() {
+		return this.speed;
+	}
+	
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
 }

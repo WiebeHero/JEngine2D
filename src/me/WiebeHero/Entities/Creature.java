@@ -6,7 +6,7 @@ import me.WiebeHero.Tiles.Tile;
 public abstract class Creature extends Entity{
 	
 	public static final int DEFAULT_HEALTH = 10;
-	public static final float DEFAULT_SPEED = 3.0F;
+	public static final float DEFAULT_SPEED = 2.4F;
 	public static final int DEFAULT_CREATURE_WIDTH = 64, DEFAULT_CREATURE_HEIGHT = 64;
 	
 	protected Direction dir;
@@ -24,8 +24,12 @@ public abstract class Creature extends Entity{
 	}
 	
 	public void move() {
-		this.moveX();
-		this.moveY();
+		if(!this.checkEntityCollisions(xMove, 0F)) {
+			this.moveX();
+		}
+		if(!this.checkEntityCollisions(0F, yMove)) {
+			this.moveY();
+		}
 	}
 	
 	public void moveX() {
