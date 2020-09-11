@@ -58,6 +58,14 @@ public class Animation {
 		}
 	}
 	
+	public boolean isOnLastFrame() {
+		return this.frames.length - 1 == this.index;
+	}
+	
+	public boolean isOnFirstFrame() {
+		return this.index == 0;
+	}
+	
 	public BufferedImage getCurrentFrame() {
 		return this.frames[this.index];
 	}
