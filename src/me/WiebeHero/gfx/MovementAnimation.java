@@ -1,31 +1,49 @@
 package me.WiebeHero.gfx;
 
-import java.awt.image.BufferedImage;
-
-public class Animation {
+public class MovementAnimation {
 	
-	private int speed, index;
+	private int speed, index, max, xOffset, yOffset;
 	private long lastTime, timer;
-	private BufferedImage[] frames;
 	private boolean paused;
 	private boolean reversed;
 	
-	public Animation(int speed, BufferedImage[] frames) {
+	public MovementAnimation(int speed, int max, int xOffset, int yOffset) {
 		this.speed = speed;
-		this.frames = frames;
+		this.max = max;
 		this.index = 0;
 		this.timer = 0;
+		this.xOffset = xOffset;
+		this.yOffset = yOffset;
 		this.lastTime = System.currentTimeMillis();
 	}
 	
-	public Animation(int speed, BufferedImage[] frames, boolean reversed) {
+	public MovementAnimation(int speed, int max, boolean reversed, int xOffset, int yOffset) {
 		this.speed = speed;
-		this.frames = frames;
+		this.max = max;
 		this.timer = 0;
 		this.reversed = reversed;
+		this.xOffset = xOffset;
+		this.yOffset = yOffset;
 		this.lastTime = System.currentTimeMillis();
 		if(this.reversed) {
-			this.index = this.frames.length - 1;
+			this.index = this.max - 1;
+		}
+		else {
+			this.index = 0;
+		}
+	}
+	
+	public MovementAnimation(int speed, int max, boolean paused, boolean reversed, int xOffset, int yOffset) {
+		this.speed = speed;
+		this.max = max;
+		this.timer = 0;
+		this.reversed = reversed;
+		this.paused = paused;
+		this.xOffset = xOffset;
+		this.yOffset = yOffset;
+		this.lastTime = System.currentTimeMillis();
+		if(this.reversed) {
+			this.index = this.max - 1;
 		}
 		else {
 			this.index = 0;
@@ -41,7 +59,7 @@ public class Animation {
 				if(this.timer > this.speed) {
 					this.index++;
 					this.timer = 0;
-					if(this.index >= this.frames.length) {
+					if(this.index >= this.max) {
 						this.index = 0;
 					}
 				}
@@ -51,23 +69,23 @@ public class Animation {
 					this.index--;
 					this.timer = 0;
 					if(this.index < 0) {
-						this.index = this.frames.length - 1;
+						this.index = this.max - 1;
 					}
 				}
 			}
 		}
 	}
 	
-	public boolean isOnLastFrame() {
-		return this.frames.length - 1 == this.index;
+	public boolean isOnLastIndex() {
+		return this.max - 1 == this.index;
 	}
 	
-	public boolean isOnFirstFrame() {
+	public boolean isOnFirstIndex() {
 		return this.index == 0;
 	}
 	
-	public BufferedImage getCurrentFrame() {
-		return this.frames[this.index];
+	public int getCurrentIndex() {
+		return this.index;
 	}
 	
 	public int getSpeed() {
@@ -92,5 +110,13 @@ public class Animation {
 	
 	public void setReversed(boolean reversed) {
 		this.reversed = reversed;
+	}
+	
+	public int getXOffset() {
+		return this.xOffset;
+	}
+	
+	public int getYOffset() {
+		return this.yOffset;
 	}
 }

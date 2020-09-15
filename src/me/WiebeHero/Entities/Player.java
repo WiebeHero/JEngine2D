@@ -4,13 +4,13 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import me.WiebeHero.Main.Handler;
-import me.WiebeHero.gfx.Animation;
 import me.WiebeHero.gfx.Assets;
+import me.WiebeHero.gfx.SpriteAnimation;
 
 public class Player extends Creature{
 	
 	//Animations
-	private Animation animDown, animUp, animLeft, animRight;
+	private SpriteAnimation animDown, animUp, animLeft, animRight;
 	private int normalSpeed, sprintSpeed;
 	private boolean sprinting;
 	
@@ -26,10 +26,10 @@ public class Player extends Creature{
 		this.sprinting = false;
 		
 		//Animations
-		this.animDown = new Animation(this.normalSpeed, Assets.player_down);
-		this.animUp = new Animation(this.normalSpeed, Assets.player_up);
-		this.animLeft = new Animation(this.normalSpeed, Assets.player_left);
-		this.animRight = new Animation(this.normalSpeed, Assets.player_right);
+		this.animDown = new SpriteAnimation(this.normalSpeed, Assets.player_down);
+		this.animUp = new SpriteAnimation(this.normalSpeed, Assets.player_up);
+		this.animLeft = new SpriteAnimation(this.normalSpeed, Assets.player_left);
+		this.animRight = new SpriteAnimation(this.normalSpeed, Assets.player_right);
 	}
 
 	@Override

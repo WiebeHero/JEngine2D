@@ -1,6 +1,8 @@
 package me.WiebeHero.Main;
 
 import java.awt.Graphics;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferStrategy;
 
 import me.WiebeHero.Display.Display;
@@ -51,6 +53,12 @@ public class Game implements Runnable{
 		this.display.getFrame().addKeyListener(this.keyManager);
 		this.display.getFrame().addMouseListener(this.mouseManager);
 		this.display.getFrame().addMouseMotionListener(this.mouseManager);
+		this.display.getFrame().getRootPane().addComponentListener(new ComponentAdapter() {
+		    public void componentResized(ComponentEvent componentEvent) {
+		    	width = display.getFrame().getWidth() - 16;
+		    	height = display.getFrame().getHeight() - 39;
+		    }
+		});
 		this.display.getCanvas().addMouseListener(this.mouseManager);
 		this.display.getCanvas().addMouseMotionListener(this.mouseManager);
 		Assets.init();
@@ -67,6 +75,7 @@ public class Game implements Runnable{
 		if(State.getState() != null) {
 			State.getState().tick();
 		}
+		
 	}
 	
 	private void render() {
@@ -126,6 +135,10 @@ public class Game implements Runnable{
 	
 	public GameCamera getGameCamera() {
 		return this.gameCamera;
+	}
+	
+	public Display getDisplay() {
+		return this.display;
 	}
 	
 	public int getWidth() {
