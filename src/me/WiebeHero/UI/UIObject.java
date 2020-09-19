@@ -13,6 +13,14 @@ public abstract class UIObject {
 	protected Rectangle bounds;
 	protected boolean hovering = false;
 	
+	/**
+	 * This constructor can not be called. Because it is an abstract class.
+	 *
+	 * @param x | Horizontal position on the screen.
+	 * @param y | Vertical position on the screen.
+	 * @param width | Width that it is taking on the screen.
+	 * @param height | Height that it is taking on the screen.
+	 */
 	public UIObject(float x, float y, int width, int height) {
 		this.x = x;
 		this.y = y;
@@ -24,7 +32,14 @@ public abstract class UIObject {
 		this.marginY = -1F;
 		this.bounds = new Rectangle((int)x, (int)y, width, height);
 	}
-	
+	/**
+	 * This constructor can not be called. Because it is an abstract class.
+	 *
+	 * @param marginX | Horizontal position on the screen. (Proportional to the screens size, given a %)
+	 * @param marginY | Vertical position on the screen. (Proportional to the screens size, given a %)
+	 * @param width | Width that it is taking on the screen.
+	 * @param height | Height that it is taking on the screen.
+	 */
 	public UIObject(double marginX, double marginY, int width, int height) {
 		this.x = 0.00F;
 		this.y = 0.00F;
@@ -36,7 +51,16 @@ public abstract class UIObject {
 		this.height = height;
 		this.bounds = new Rectangle((int)x, (int)y, width, height);
 	}
-	
+	/**
+	 * This constructor can not be called. Because it is an abstract class.
+	 *
+	 * @param marginX | Horizontal position on the screen. (Proportional to the screens size, given a %)
+	 * @param marginY | Vertical position on the screen. (Proportional to the screens size, given a %)
+	 * @param extraX | Horizontal position on the screen. (Raw offset in pixels apart from margin (Horizontal))
+	 * @param extraY | Vertical position on the screen. (Raw offset in pixels apart from margin (Vertical))
+	 * @param width | Width that it is taking on the screen.
+	 * @param height | Height that it is taking on the screen.
+	 */
 	public UIObject(double marginX, double marginY, float extraX, float extraY, int width, int height) {
 		this.x = 0.00F;
 		this.y = 0.00F;
@@ -48,13 +72,25 @@ public abstract class UIObject {
 		this.extraY = extraY;
 		this.bounds = new Rectangle((int)x, (int)y, width, height);
 	}
-	
+	/**
+	 * Method that is being called every frame.
+	 */
 	public abstract void tick();
-	
+	/**
+	 * Method that draws things to the screen.
+	 * 
+	 * @param g | Main graphics object that draws to the screen.
+	 */
 	public abstract void render(Graphics g);
-	
+	/**
+	 * Method that is being called when the button is clicked on.
+	 */
 	public abstract void onClick();
-	
+	/**
+	 * Sets the hovering state dependent on the position of the mouse.
+	 * 
+	 * @param event | Mouse Move Event.
+	 */
 	public void onMouseMove(MouseEvent event) {
 		if(this.bounds.contains(event.getX(), event.getY())) {
 			this.hovering = true;
@@ -63,7 +99,11 @@ public abstract class UIObject {
 			this.hovering = false;
 		}
 	}
-	
+	/**
+	 * Calls the onClick() method that can be overridden when the mouse is released.
+	 * 
+	 * @param event | Mouse Release Event.
+	 */
 	public void onMouseRelease(MouseEvent event) {
 		if(this.hovering && this.bounds.contains(event.getX(), event.getY())) {
 			this.onClick();
@@ -71,35 +111,59 @@ public abstract class UIObject {
 	}
 	
 	//Getters and Setters
-	
+	/**
+	 * Returns the vertical position of the object.
+	 */
 	public float getX() {
 		return x;
 	}
-
+	/**
+	 * Sets the vertical position of the object.
+	 * 
+	 * @param x | Vertical position in floats.
+	 */
 	public void setX(float x) {
 		this.x = x;
 	}
-
+	/**
+	 * Returns the horizontal position of the object.
+	 */
 	public float getY() {
 		return y;
 	}
-
+	/**
+	 * Sets the horizonal position of the object.
+	 * 
+	 * @param y | Horizontal position in floats.
+	 */
 	public void setY(float y) {
 		this.y = y;
 	}
-	
+	/**
+	 * Returns the vertical margin of the object.
+	 */
 	public double getMarginX() {
 		return marginX;
 	}
-
+	/**
+	 * Sets the vertical margin of the object.
+	 * 
+	 * @param marginX | Vertical margin in doubles.
+	 */
 	public void setMarginX(double marginX) {
 		this.marginX = marginX;
 	}
-
+	/**
+	 * Returns the horizontal margin of the object.
+	 */
 	public double getMarginY() {
 		return marginY;
 	}
-
+	/**
+	 * Sets the horizontal margin of the object.
+	 * 
+	 * @param marginY | Horizontal margin in doubles.
+	 */
 	public void setMarginY(double marginY) {
 		this.marginY = marginY;
 	}

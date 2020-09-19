@@ -28,12 +28,12 @@ public class Display {
 		this.frame.setResizable(true);
 		this.frame.setLocationRelativeTo(null);
 		this.frame.setVisible(true);
-		this.frame.setMinimumSize(new Dimension(640, 360));
+		this.frame.setMinimumSize(new Dimension(640, 400));
 		
 		this.canvas = new Canvas();
 		this.canvas.setPreferredSize(new Dimension(this.width, this.height));
 		this.canvas.setMaximumSize(new Dimension(this.width, this.height));
-		this.canvas.setMinimumSize(new Dimension(640, 360));
+		this.canvas.setMinimumSize(new Dimension(640, 400));
 		this.canvas.setFocusable(false);
 		
 		this.frame.add(this.canvas);

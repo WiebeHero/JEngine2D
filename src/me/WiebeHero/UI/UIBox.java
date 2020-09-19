@@ -42,5 +42,9 @@ public class UIBox extends UIObject{
 	public ArrayList<UIImageButton> getButtons(){
 		return this.buttons;
 	}
+	
+	public UIImageButton getButton(int index) {
+		return this.buttons.get(index);
+	}
 
 }
