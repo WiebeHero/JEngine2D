@@ -4,14 +4,18 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
-public abstract class UIObject {
+import me.WiebeHero.Main.Game;
+
+public abstract class UIObject implements Marginable{
 	
+	
+	protected UIObject inheritance;
 	protected float x, y;
 	protected double marginX, marginY;
-	protected float extraX, extraY;
 	protected int width, height;
 	protected Rectangle bounds;
 	protected boolean hovering = false;
+	protected boolean hovered = false;
 	
 	/**
 	 * This constructor can not be called. Because it is an abstract class.
@@ -24,8 +28,6 @@ public abstract class UIObject {
 	public UIObject(float x, float y, int width, int height) {
 		this.x = x;
 		this.y = y;
-		this.extraX = 0;
-		this.extraY = 0;
 		this.width = width;
 		this.height = height;
 		this.marginX = -1F;
@@ -43,34 +45,31 @@ public abstract class UIObject {
 	public UIObject(double marginX, double marginY, int width, int height) {
 		this.x = 0.00F;
 		this.y = 0.00F;
-		this.extraX = 0;
-		this.extraY = 0;
 		this.marginX = marginX;
 		this.marginY = marginY;
 		this.width = width;
 		this.height = height;
 		this.bounds = new Rectangle((int)x, (int)y, width, height);
+		this.updateM();
 	}
 	/**
 	 * This constructor can not be called. Because it is an abstract class.
 	 *
 	 * @param marginX | Horizontal position on the screen. (Proportional to the screens size, given a %)
 	 * @param marginY | Vertical position on the screen. (Proportional to the screens size, given a %)
-	 * @param extraX | Horizontal position on the screen. (Raw offset in pixels apart from margin (Horizontal))
-	 * @param extraY | Vertical position on the screen. (Raw offset in pixels apart from margin (Vertical))
 	 * @param width | Width that it is taking on the screen.
 	 * @param height | Height that it is taking on the screen.
 	 */
-	public UIObject(double marginX, double marginY, float extraX, float extraY, int width, int height) {
+	public UIObject(double marginX, double marginY, int width, int height, UIObject inheritance) {
 		this.x = 0.00F;
 		this.y = 0.00F;
 		this.marginX = marginX;
 		this.marginY = marginY;
 		this.width = width;
 		this.height = height;
-		this.extraX = extraX;
-		this.extraY = extraY;
+		this.inheritance = inheritance;
 		this.bounds = new Rectangle((int)x, (int)y, width, height);
+		this.updateM();
 	}
 	/**
 	 * Method that is being called every frame.
@@ -83,9 +82,21 @@ public abstract class UIObject {
 	 */
 	public abstract void render(Graphics g);
 	/**
+	 * Method that is being called when the button is hovered on.
+	 */
+	public abstract void onHover();
+	/**
 	 * Method that is being called when the button is clicked on.
 	 */
-	public abstract void onClick();
+	public abstract void onRelease();
+	/**
+	 * Method that is being called when the button is clicked on.
+	 */
+	public abstract void onPress();
+	/**
+	 * Method that is being called something is being dragged.
+	 */
+	public abstract void onDrag();
 	/**
 	 * Sets the hovering state dependent on the position of the mouse.
 	 * 
@@ -94,9 +105,24 @@ public abstract class UIObject {
 	public void onMouseMove(MouseEvent event) {
 		if(this.bounds.contains(event.getX(), event.getY())) {
 			this.hovering = true;
+			if(!this.hovered) {
+				this.hovered = true;
+				this.onHover();
+			}
 		}
 		else {
 			this.hovering = false;
+			this.hovered = false;
+		}
+	}
+	/**
+	 * Calls the onClick() method that can be overridden when the mouse is released.
+	 * 
+	 * @param event | Mouse Release Event.
+	 */
+	public void onMousePress(MouseEvent event) {
+		if(this.hovering && this.bounds.contains(event.getX(), event.getY())) {
+			this.onPress();
 		}
 	}
 	/**
@@ -106,7 +132,17 @@ public abstract class UIObject {
 	 */
 	public void onMouseRelease(MouseEvent event) {
 		if(this.hovering && this.bounds.contains(event.getX(), event.getY())) {
-			this.onClick();
+			this.onRelease();
+		}
+	}
+	/**
+	 * Calls the onClick() method that can be overridden when the mouse is released.
+	 * 
+	 * @param event | Mouse Release Event.
+	 */
+	public void onMouseDrag(MouseEvent event) {
+		if(this.hovering && this.bounds.contains(event.getX(), event.getY())) {
+			this.onDrag();
 		}
 	}
 	
@@ -152,6 +188,7 @@ public abstract class UIObject {
 	 */
 	public void setMarginX(double marginX) {
 		this.marginX = marginX;
+		this.updateM();
 	}
 	/**
 	 * Returns the horizontal margin of the object.
@@ -166,22 +203,7 @@ public abstract class UIObject {
 	 */
 	public void setMarginY(double marginY) {
 		this.marginY = marginY;
-	}
-	
-	public float getExtraX() {
-		return extraX;
-	}
-
-	public void setExtraX(float extraX) {
-		this.extraX = extraX;
-	}
-
-	public float getExtraY() {
-		return extraY;
-	}
-
-	public void setExtraY(float extraY) {
-		this.extraY = extraY;
+		this.updateM();
 	}
 
 	public int getWidth() {
@@ -190,6 +212,7 @@ public abstract class UIObject {
 
 	public void setWidth(int width) {
 		this.width = width;
+		this.bounds.width = width;
 	}
 
 	public int getHeight() {
@@ -198,6 +221,7 @@ public abstract class UIObject {
 
 	public void setHeight(int height) {
 		this.height = height;
+		this.bounds.height = height;
 	}
 
 	public boolean isHovering() {
@@ -211,8 +235,58 @@ public abstract class UIObject {
 	public Rectangle getBounds() {
 		return this.bounds;
 	}
+	
+	public void setInheritance(UIObject object) {
+		this.inheritance = object;
+		if(this.inheritance != null && marginX != -1F && marginY != -1F) {
+			float inX = inheritance.getX(), inY = inheritance.getY();
+			int inWidth = inheritance.getWidth(), inHeight = inheritance.getHeight();
+			int finalX = (int)inX + (int)(inWidth / 100.00 * marginX) - width / 2, finalY = (int)inY + (int)(inHeight / 100.00 * marginY) - height / 2;
+			x = finalX;
+			bounds.x = finalX;
+			y = finalY;
+			bounds.y = finalY;
+		}
+		else {
+			int canvasX = Game.handler.getWidth(), canvasY = Game.handler.getHeight();
+			int finalX = (int)(canvasX / 100.00 * marginX) - width / 2, finalY = (int)(canvasY / 100.00 * marginY) - height / 2;
+			x = finalX;
+			bounds.x = finalX;
+			y = finalY;
+			bounds.y = finalY;
+		}
+	}
+	
+	public UIObject getInheritance() {
+		return this.inheritance;
+	}
 
 	public boolean overlaps(Rectangle r) {
 	    return x < r.x + r.width && x + width > r.x && y < r.y + r.height && y + height > r.y;
+	}
+	
+	protected void updateM() {
+		if(this.inheritance != null) {
+			float inX = inheritance.getX(), inY = inheritance.getY();
+			int inWidth = inheritance.getWidth(), inHeight = inheritance.getHeight();
+			int finalX = (int)inX + (int)(inWidth / 100.00 * marginX) - width / 2, finalY = (int)inY + (int)(inHeight / 100.00 * marginY) - height / 2;
+			x = finalX;
+			y = finalY;
+			bounds.x = finalX;
+			bounds.y = finalY;
+		}
+		else {
+			int canvasX = Game.handler.getWidth(), canvasY = Game.handler.getHeight();
+			int finalX = (int)(canvasX / 100.00 * marginX) - width / 2, finalY = (int)(canvasY / 100.00 * marginY) - height / 2;
+			x = finalX;
+			y = finalY;
+			bounds.x = finalX;
+			bounds.y = finalY;
+		}
+	}
+	
+	@Override
+	public void updateMargin() {
+		this.updateM();
 	}
 }

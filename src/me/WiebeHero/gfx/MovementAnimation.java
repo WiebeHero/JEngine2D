@@ -1,7 +1,5 @@
 package me.WiebeHero.gfx;
 
-import me.WiebeHero.gfx.AnimationTypes.AnimationType;
-
 public class MovementAnimation extends Animation{
 	
 	private float xOffset, yOffset;
@@ -16,11 +14,11 @@ public class MovementAnimation extends Animation{
 	 * @param yOffset | The offset of the y, it can be positive or negative.
 	 * @param options | Options for the animation. 0 = PAUSED | 1 = REVERSED | 2 = LOOP | 3 = HOVER TRIGGER
 	 */
-	public MovementAnimation(int speed, int max, float xOffset, float yOffset, boolean... options) {
+	public MovementAnimation(int speed, int max, float xOffset, float yOffset, AnimOption... options) {
 		super(speed, max, options);
 		this.xOffset = xOffset;
 		this.yOffset = yOffset;
-		this.setAnimationType(AnimationType.MOVEMENT);
+		this.setAnimationType(AnimType.MOVEMENT);
 	}
 	/**
 	 * Get the current x offset of the animation.

@@ -3,11 +3,15 @@ package me.WiebeHero.States;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import me.WiebeHero.InputListeners.HoverListener;
+import me.WiebeHero.InputListeners.PressListener;
+import me.WiebeHero.Main.Game;
 import me.WiebeHero.Main.Handler;
-import me.WiebeHero.UI.ClickListener;
+import me.WiebeHero.Sounds.Sounds;
 import me.WiebeHero.UI.UIBox;
 import me.WiebeHero.UI.UIImageButton;
 import me.WiebeHero.UI.UIManager;
+import me.WiebeHero.gfx.AnimOption;
 import me.WiebeHero.gfx.Assets;
 import me.WiebeHero.gfx.MovementAnimation;
 import me.WiebeHero.gfx.SizeAnimation;
@@ -17,71 +21,111 @@ public class MenuState extends State{
 
 	private UIManager uiManager;
 	
-	public MenuState(Handler handler) {
-		super(handler);
-		this.uiManager = new UIManager(this.handler);
-		this.handler.getMouseManager().setUIManager(this.uiManager);
-		UIBox menuBox = new UIBox(50.0D, 50.0D, 250, 350);
-		menuBox.addButton(new UIImageButton(50.0D, 17.5D, 200, 200, Assets.title_icon, new ClickListener() {
+	public MenuState() {
+		Handler handler = Game.handler;
+		this.uiManager = new UIManager();
+		UIBox menuBox = new UIBox(47.5D, 50.0D, 512, 480, null);
+		
+		UIImageButton title = new UIImageButton(50.0D, 16.5D, 320, 160, Assets.title_icon);
+		menuBox.addObject(title);
+		
+		UIImageButton newButton = new UIImageButton(64.5D, 43.75D, 100, 50, Assets.new_icon);
+		newButton.addAnimations(new MovementAnimation(16, 38, 3F, 0F, AnimOption.PAUSED), new SizeAnimation(30, 5, 2, 1, AnimOption.PAUSED, AnimOption.HOVER_TRIGGER));
+		newButton.addListeners(
+		new PressListener() {
 
 			@Override
-			public void onClick() {
-				
-			}
-			
-		}));
-		menuBox.addButton(new UIImageButton(50.0D, 41.0D, 35, 0, 64, 33, Assets.new_icon, new ClickListener() {
-
-			@Override
-			public void onClick() {
-				UIImageButton playButton = (UIImageButton) menuBox.getButton(3);
-				UIImageButton newButton = (UIImageButton) menuBox.getButton(1);
+			public void listen() {
+				UIImageButton playButton = (UIImageButton) menuBox.getObject(3);
+				UIImageButton newButton = (UIImageButton) menuBox.getObject(1);
 				if(!playButton.overlaps(newButton.getBounds())) {
 					handler.getMouseManager().setUIManager(null);
 					State.setState(handler.getGame().gameState);
 				}
 			}
 			
-		}, new MovementAnimation(20, 20, 4F, 0F, true, false, false, false), new SizeAnimation(30, 5, 2, 1, true, false, false, true)));
-		menuBox.addButton(new UIImageButton(50.0D, 53.0D, 35, 0, 64, 33, Assets.load_icon, new ClickListener() {
+		}, new HoverListener() {
 			
 			@Override
-			public void onClick() {
-				UIImageButton playButton = (UIImageButton) menuBox.getButton(3);
-				UIImageButton loadButton = (UIImageButton) menuBox.getButton(2);
+			public void listen() {
+				UIImageButton playButton = (UIImageButton) menuBox.getObject(3);
+				UIImageButton newButton = (UIImageButton) menuBox.getObject(1);
+				if(!playButton.overlaps(newButton.getBounds())) {
+					Sounds.hover_button.start();
+				}
+			}
+			
+		});
+		menuBox.addObject(newButton);
+		
+		UIImageButton loadButton = new UIImageButton(64.5D, 55.5D, 100, 50, Assets.load_icon);
+		loadButton.addAnimations(new MovementAnimation(16, 38, 3F, 0F, AnimOption.PAUSED), new SizeAnimation(30, 5, 2, 1, AnimOption.PAUSED, AnimOption.HOVER_TRIGGER));
+		loadButton.addListeners(
+		new PressListener() {
+			
+			@Override
+			public void listen() {
+				UIImageButton playButton = (UIImageButton) menuBox.getObject(3);
+				UIImageButton loadButton = (UIImageButton) menuBox.getObject(2);
 				if(!playButton.overlaps(loadButton.getBounds())) {
 					handler.getMouseManager().setUIManager(null);
 					State.setState(handler.getGame().gameState);
 				}
 			}
 			
-		}, new MovementAnimation(20, 20, 4F, 0F, true, false, false, false), new SizeAnimation(30, 5, 2, 1, true, false, false, true)));
-		
-		menuBox.addButton(new UIImageButton(50.0D, 47.0D, 150, 80, Assets.play_icon, new ClickListener() {
+		}, 
+		new HoverListener() {
 			
 			@Override
-			public void onClick() {
-				UIImageButton newButton = (UIImageButton) menuBox.getButton(1);
-				UIImageButton loadButton = (UIImageButton) menuBox.getButton(2);
-				newButton.getAnimation(0).setPaused(false);
-				loadButton.getAnimation(0).setPaused(false);
+			public void listen() {
+				UIImageButton playButton = (UIImageButton) menuBox.getObject(3);
+				UIImageButton loadButton = (UIImageButton) menuBox.getObject(2);
+				if(!playButton.overlaps(loadButton.getBounds())) {
+					Sounds.hover_button.start();
+				}
 			}
-			
-		}, new SpriteAnimation(100, Assets.play_icon, true, false, false, true)));
+		});
+		menuBox.addObject(loadButton);
 		
-		menuBox.addButton(new UIImageButton(50.0D, 72D, 150, 71, Assets.settings_icon, new ClickListener() {
+		UIImageButton playButton = new UIImageButton(50.0D, 49.5D, 256, 128, Assets.play_icon);
+		playButton.addAnimations(new SpriteAnimation(25, Assets.play_icon, AnimOption.PAUSED, AnimOption.HOVER_TRIGGER));
+		playButton.addListeners(new PressListener() {
 			
 			@Override
-			public void onClick() {
-				
+			public void listen() {
+				UIImageButton newButton = (UIImageButton) menuBox.getObject(1);
+				UIImageButton loadButton = (UIImageButton) menuBox.getObject(2);
+				newButton.getAnimation(0).setOptionState(AnimOption.PAUSED, false);
+				loadButton.getAnimation(0).setOptionState(AnimOption.PAUSED, false);
 			}
 			
-		}, new SizeAnimation(30, 5, 2, 1, true, false, false, true)));
+		});
+		menuBox.addObject(playButton);
+		
+		UIImageButton settingsButton = new UIImageButton(50.0D, 79.5D, 256, 128, Assets.settings_icon);
+		settingsButton.addAnimations(new SpriteAnimation(25, Assets.settings_icon, AnimOption.PAUSED, AnimOption.HOVER_TRIGGER));
+		settingsButton.addListeners(
+		new PressListener() {
+			
+			@Override
+			public void listen() {
+				handler.getMouseManager().setUIManager(null);
+				State.setState(handler.getGame().settingsState);
+				handler.getGame().settingsState.initMouseManager();
+			}
+			
+		});
+		menuBox.addObject(settingsButton);
 		this.uiManager.addObject(menuBox);
 	}
 	
 	//First Button: X = X + 150 Y = 150
 	//Second Button: X = X + 150 Y = 191
+	
+	@Override
+	public void initMouseManager() {
+		Game.handler.getMouseManager().setUIManager(this.uiManager);
+	}
 	
 	@Override
 	public void tick() {
@@ -92,8 +136,6 @@ public class MenuState extends State{
 	public void render(Graphics g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, 1930, 1080);
-		g.setColor(Color.RED);
-		this.uiManager.updateXY();
 		this.uiManager.render(g);
 	}
 

@@ -2,8 +2,6 @@ package me.WiebeHero.gfx;
 
 import java.awt.image.BufferedImage;
 
-import me.WiebeHero.gfx.AnimationTypes.AnimationType;
-
 public class SpriteAnimation extends Animation{
 	
 	private BufferedImage frames[];
@@ -16,10 +14,10 @@ public class SpriteAnimation extends Animation{
 	 * @param frames | Spritesheet frames for the animation to play.
 	 * @param options | Options for the animation. 0 = PAUSED | 1 = REVERSED | 2 = LOOP | 3 = HOVER TRIGGER
 	 */
-	public SpriteAnimation(int speed, BufferedImage[] frames, boolean... options) {
+	public SpriteAnimation(int speed, BufferedImage[] frames, AnimOption... options) {
 		super(speed, frames, options);
 		this.frames = frames;
-		this.setAnimationType(AnimationType.SPRITE);
+		this.setAnimationType(AnimType.SPRITE);
 	}
 	
 	/**

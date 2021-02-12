@@ -3,13 +3,19 @@ package me.WiebeHero.Main;
 import java.awt.Graphics;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 
 import me.WiebeHero.Display.Display;
 import me.WiebeHero.Input.KeyManager;
 import me.WiebeHero.Input.MouseManager;
+import me.WiebeHero.Settings.Settings;
+import me.WiebeHero.Sounds.Sounds;
+import me.WiebeHero.States.FightState;
 import me.WiebeHero.States.GameState;
 import me.WiebeHero.States.MenuState;
+import me.WiebeHero.States.SettingsState;
 import me.WiebeHero.States.State;
 import me.WiebeHero.gfx.Assets;
 import me.WiebeHero.gfx.GameCamera;
@@ -29,6 +35,8 @@ public class Game implements Runnable{
 	//States
 	public State gameState;
 	public State menuState;
+	public State settingsState;
+	public State fightState;
 	
 	//Input
 	private KeyManager keyManager;
@@ -38,7 +46,7 @@ public class Game implements Runnable{
 	private GameCamera gameCamera;
 	
 	//Handler
-	private Handler handler;
+	public static Handler handler;
 	
 	public Game(String title, int width, int height) {
 		this.width = width;
@@ -59,13 +67,23 @@ public class Game implements Runnable{
 		    	height = display.getFrame().getHeight() - 39;
 		    }
 		});
+		this.display.getFrame().addWindowListener(new WindowAdapter() {
+		    public void windowClosing(WindowEvent windowEvent) {
+		    	Settings.saveSettings();
+		    }
+		});
 		this.display.getCanvas().addMouseListener(this.mouseManager);
 		this.display.getCanvas().addMouseMotionListener(this.mouseManager);
 		Assets.init();
-		this.handler = new Handler(this);
-		this.gameCamera = new GameCamera(this.handler, 0, 0);
-		this.gameState = new GameState(this.handler);
-		this.menuState = new MenuState(this.handler);
+		Sounds.init();
+		Settings.loadSettings();
+		Game.handler = new Handler(this);
+		this.gameCamera = new GameCamera(0, 0);
+		this.gameState = new GameState();
+		this.menuState = new MenuState();
+		this.menuState.initMouseManager();
+		this.fightState = new FightState();
+		this.settingsState = new SettingsState();
 		State.setState(this.menuState);
 	}
 	

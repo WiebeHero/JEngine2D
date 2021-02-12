@@ -1,7 +1,5 @@
 package me.WiebeHero.Main;
 
-import java.awt.Canvas;
-
 import me.WiebeHero.Display.Display;
 import me.WiebeHero.Input.KeyManager;
 import me.WiebeHero.Input.MouseManager;
@@ -40,18 +38,6 @@ public class Handler {
 	public Game getGame() {
 		return game;
 	}
-	
-	public Display getDisplay() {
-		return game.getDisplay();
-	}
-	
-	public Canvas getCanvas() {
-		return this.getDisplay().getCanvas();
-	}
-
-	public void setGame(Game game) {
-		this.game = game;
-	}
 
 	public World getWorld() {
 		return world;
@@ -59,6 +45,10 @@ public class Handler {
 
 	public void setWorld(World world) {
 		this.world = world;
+	}
+	
+	public Display getDisplay() {
+		return this.game.getDisplay();
 	}
 	
 }

@@ -9,7 +9,7 @@ import me.WiebeHero.UI.UIManager;
 public class MouseManager implements MouseListener, MouseMotionListener{
 
 	private boolean leftPressed, rightPressed;
-	private int mouseX, mouseY;
+	public static int mouseX, mouseY;
 	private UIManager uiManager;
 	
 	public MouseManager() {
@@ -30,26 +30,21 @@ public class MouseManager implements MouseListener, MouseMotionListener{
 		return this.rightPressed;
 	}
 	
-	public int getMouseX() {
-		return this.mouseX;
-	}
-	
-	public int getMouseY() {
-		return this.mouseY;
-	}
-	
 	// Implemented methods
 	
 	@Override
 	public void mouseDragged(MouseEvent event) {
-		// TODO Auto-generated method stub
-		
+		mouseX = event.getX();
+		mouseY = event.getY();
+		if(this.uiManager != null) {
+			this.uiManager.onMouseDrag(event);
+		}
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent event) {
-		this.mouseX = event.getX();
-		this.mouseY = event.getY();
+		mouseX = event.getX();
+		mouseY = event.getY();
 		if(this.uiManager != null) {
 			this.uiManager.onMouseMove(event);
 		}
@@ -81,6 +76,9 @@ public class MouseManager implements MouseListener, MouseMotionListener{
 		else if(event.getButton() == MouseEvent.BUTTON3) {
 			this.rightPressed = true;
 		}
+		if(this.uiManager != null) {
+			this.uiManager.onMousePress(event);
+		}
 	}
 
 	@Override
@@ -95,5 +93,4 @@ public class MouseManager implements MouseListener, MouseMotionListener{
 			this.uiManager.onMouseRelease(event);
 		}
 	}
-
 }

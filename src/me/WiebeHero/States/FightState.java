@@ -2,12 +2,10 @@ package me.WiebeHero.States;
 
 import java.awt.Graphics;
 
-import me.WiebeHero.Main.Handler;
-
 public class FightState extends State{
 	
-	public FightState(Handler handler) {
-		super(handler);
+	public FightState() {
+		
 	}
 
 	@Override
@@ -17,6 +15,11 @@ public class FightState extends State{
 
 	@Override
 	public void render(Graphics g) {
+		
+	}
+
+	@Override
+	public void initMouseManager() {
 		
 	}
 	

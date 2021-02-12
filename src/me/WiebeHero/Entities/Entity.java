@@ -3,17 +3,23 @@ package me.WiebeHero.Entities;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-import me.WiebeHero.Main.Handler;
+import me.WiebeHero.Main.Game;
 
 public abstract class Entity {
 
-	protected Handler handler;
+	public static final int DEFAULT_SOUL_HEALTH = 3;
+	public static final int DEFAULT_SOUL_SHIELD = 0;
+	
 	protected float x, y;
 	protected int width, height;
 	protected Rectangle bounds;
-	
-	public Entity(Handler handler, float x, float y, int width, int height) {
-		this.handler = handler;
+	protected int soulHealth;
+	protected int soulShield;
+	protected boolean active = true;
+
+	public Entity(float x, float y, int width, int height) {
+		this.soulHealth = DEFAULT_SOUL_HEALTH;
+		this.soulShield = DEFAULT_SOUL_SHIELD;
 		this.x = x;
 		this.y = x;
 		this.width = width;
@@ -26,8 +32,17 @@ public abstract class Entity {
 	
 	public abstract void render(Graphics g);
 	
+	public abstract void die();
+	
+	public void hurt(int amount) {
+		this.soulHealth -= amount;
+		if(this.soulHealth <= 0)
+			this.active = false;
+			this.die();
+	}
+	
 	public boolean checkEntityCollisions(float xOffset, float yOffset) {
-		for(Entity e : this.handler.getWorld().getEntityManager().getEntities()) {
+		for(Entity e : Game.handler.getWorld().getEntityManager().getEntities()) {
 			if(!e.equals(this)) {
 				if(e.getCollisionBounds(0F, 0F).intersects(this.getCollisionBounds(xOffset, yOffset))) {
 					return true;
@@ -71,5 +86,29 @@ public abstract class Entity {
 
 	public void setHeight(int height) {
 		this.height = height;
+	}
+	
+	public int getSoulHealth() {
+		return soulHealth;
+	}
+
+	public void setSoulHealth(int soulHealth) {
+		this.soulHealth = soulHealth;
+	}
+
+	public int getSoulShield() {
+		return soulShield;
+	}
+
+	public void setSoulShield(int soulShield) {
+		this.soulShield = soulShield;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

@@ -1,22 +1,24 @@
 package me.WiebeHero.gfx;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-import me.WiebeHero.gfx.AnimationTypes.AnimationType;
 
 public abstract class Animation {
 	
 	private int speed, index, max;
 	private long lastTime, timer;
 	private BufferedImage[] frames;
-	private AnimationType type;
+	private AnimType type;
 	
 	//**OPTIONS**
 	//There are different options you can choose for the animation to perform
-	//Arguments: 0 = PAUSED | 1 = REVERSED | 2 = LOOP | 3 = HOVER TRIGGER
+	//Arguments: 0 = PAUSED | 1 = REVERSED | 2 = LOOP | 3 = HOVER TRIGGER | 4 = PAUSE WHEN REACHING END OF LOOP
 	//**OPTIONS**
 	
-	private boolean[] options;
+	private AnimationOption[] animOptions;
 	private boolean hovering;
 	
 	/**
@@ -26,15 +28,12 @@ public abstract class Animation {
 	 * @param frames | frames for the animation to play
 	 * @param options | options for the animation.
 	 */
-	public Animation(int speed, BufferedImage[] frames, boolean... options) {
+	public Animation(int speed, BufferedImage[] frames, AnimOption... options) {
 		this.speed = speed;
 		this.frames = frames;
-		this.options = new boolean[4];
-		for(int i = 0; i < options.length; i++) {
-			this.options[i] = options[i];
-		}
+		this.animOptions = this.getBasicOptions(options);
 		this.max = this.frames.length;
-		if(this.isReversed()) {
+		if(this.getOptionState(AnimOption.REVERSED)) {
 			this.index = this.max - 1;
 		}
 		else {
@@ -51,16 +50,13 @@ public abstract class Animation {
 	 * @param frames | frames for the animation to play
 	 * @param options | options for the animation.
 	 */
-	public Animation(int speed, int max, boolean... options) {
+	public Animation(int speed, int max, AnimOption... options) {
 		this.speed = speed;
 		this.max = max;
 		this.index = 0;
 		this.timer = 0;
-		this.options = new boolean[4];
-		for(int i = 0; i < options.length; i++) {
-			this.options[i] = options[i];
-		}
-		if(this.isReversed()) {
+		this.animOptions = this.getBasicOptions(options);
+		if(this.getOptionState(AnimOption.REVERSED)) {
 			this.index = this.max - 1;
 		}
 		else {
@@ -74,31 +70,42 @@ public abstract class Animation {
 	public void tick() {
 		this.timer += System.currentTimeMillis() - this.lastTime;
 		this.lastTime = System.currentTimeMillis();
-		if(this.timer > this.speed) {
-			if(!this.isPaused()) {
-				this.index += this.isReversed() ? -1 : 1;
-				this.timer = 0;
-				if(this.triggerOnHover()) {
-					this.setReversed(this.hovering ? false : true);
+		boolean reversed = this.getOptionState(AnimOption.REVERSED);
+		boolean paused = this.getOptionState(AnimOption.PAUSED);
+		boolean triggerOnHover = this.getOptionState(AnimOption.HOVER_TRIGGER);
+		boolean looping = this.getOptionState(AnimOption.LOOP);
+		boolean pauseEndLoop = this.getOptionState(AnimOption.PAUSE_END_LOOP);
+		if(this.timer <= this.speed) 
+			return;
+		if(!paused) {
+			if(triggerOnHover) {
+				this.setOptionState(AnimOption.REVERSED, this.hovering ? false : true);
+			}
+			this.timer = 0;
+			this.index += reversed ? -1 : 1;
+			if(reversed ? this.index < 0 : this.index >= this.max) {
+				if(!looping) {
+					this.index = reversed ? 0 : this.max - 1;
+					this.setOptionState(AnimOption.PAUSED, true);
+					this.setOptionState(AnimOption.REVERSED, reversed ? false : true);
 				}
-				if(this.isReversed() ? this.index < 0 : this.index >= this.max) {
-					if(!this.isLooping()) {
-						this.index = this.isReversed() ? 0 : this.max - 1;
-						this.setPaused(true);
-						this.setReversed(this.isReversed() ? false : true);
+				else {
+					if(pauseEndLoop) {
+						this.index = 0;
+						this.setOptionState(AnimOption.PAUSED, true);
 					}
 					else {
 						this.index = 0;
 					}
 				}
 			}
-			else if(this.triggerOnHover()) {
-				if(this.hovering ? this.isOnLastIndex() : this.isOnFirstIndex()) {
-					this.setPaused(true);
-				}
-				else {
-					this.setPaused(false);
-				}
+		}
+		else if(triggerOnHover) {
+			if(this.hovering ? this.isOnLastIndex() : this.isOnFirstIndex()) {
+				this.setOptionState(AnimOption.PAUSED, true);
+			}
+			else {
+				this.setOptionState(AnimOption.PAUSED, false);
 			}
 		}
 	}
@@ -135,60 +142,30 @@ public abstract class Animation {
 		this.speed = speed;
 	}
 	/**
-	 * Returns a boolean saying if the animation is paused. (If it's playing or not)
-	 */
-	public boolean isPaused() {
-		return this.options[0];
-	}
-	/**
-	 * Sets the animation on a paused state. (Stops playing)
+	 * Turn an animation option on or off.
 	 * 
-	 * @param paused | If the animation should be paused or not.
+	 * @param option | AnimOption: Which option should be turned on or off.
+	 * @param state | boolean: Turn on or off.
 	 */
-	public void setPaused(boolean paused) {
-		this.options[0] = paused;
+	public void setOptionState(AnimOption option, boolean state) {
+		for(int i = 0; i < this.animOptions.length; i++) {
+			AnimationOption animOption = this.animOptions[i];
+			if(animOption.getOptionType() == option)
+				animOption.setState(state);
+		}
 	}
 	/**
-	 * Returns a boolean saying if the animation is reversed. (If it's playing backwards or not)
-	 */
-	public boolean isReversed() {
-		return this.options[1];
-	}
-	/**
-	 * Sets the animation on a reversed state. (Stars playing in reverse)
+	 * Get an Animations option state
 	 * 
-	 * @param reversed | If the animation should be reversed or not.
+	 * @param option | AnimOption: Which options state you want to see.
 	 */
-	public void setReversed(boolean reversed) {
-		this.options[1] = reversed;
-	}
-	/**
-	 * Returns a boolean saying if the animation is looping. (If it starts over at the end of the animation)
-	 */
-	public boolean isLooping() {
-		return this.options[2];
-	}
-	/**
-	 * Sets the animation on a loop state. (Starts looping the animation)
-	 * 
-	 * @param loop | If the animation should loop or not.
-	 */
-	public void setLooping(boolean loop) {
-		this.options[2] = loop;
-	}
-	/**
-	 * Returns a boolean saying if the animation is triggers on hover. (Animation starts when hovering over something)
-	 */
-	public boolean triggerOnHover() {
-		return this.options[3];
-	}
-	/**
-	 * Sets the animation on a hover trigger state. (Play animation on hover)
-	 * 
-	 * @param loop | If the animation should activate on trigger or not.
-	 */
-	public void setHoverTrigger(boolean hoverTrigger) {
-		this.options[3] = hoverTrigger;
+	public boolean getOptionState(AnimOption option) {
+		for(int i = 0; i < this.animOptions.length; i++) {
+			AnimationOption animOption = this.animOptions[i];
+			if(animOption.getOptionType() == option)
+				return animOption.getState();
+		}
+		return false;
 	}
 	/**
 	 * Sets the animation on a hover trigger state. (Play animation on hover)
@@ -201,7 +178,7 @@ public abstract class Animation {
 	/**
 	 * Returns an enum of the animations type.
 	 */
-	public AnimationType getAnimationType() {
+	public AnimType getAnimationType() {
 		return this.type;
 	}
 	/**
@@ -209,7 +186,28 @@ public abstract class Animation {
 	 * 
 	 * @param type | Animation type.
 	 */
-	public void setAnimationType(AnimationType type) {
+	public void setAnimationType(AnimType type) {
 		this.type = type;
+	}
+	/**
+	 * Get a basic setup for the AnimationOptions. The paramater in this getter
+	 * is the Animation is the list of Animation Options you want to be enabled
+	 * 
+	 * @param enabled | Animation Options you want to be enabled upon instantiation
+	 */
+	private AnimationOption[] getBasicOptions(AnimOption enabled[]) {
+		Set<AnimOption> setEnabled = new HashSet<>(Arrays.asList(enabled));
+		AnimOption options[] = AnimOption.values();
+		AnimationOption[] animOptions = new AnimationOption[options.length];
+		for(int i = 0; i < options.length; i++) {
+			AnimOption option = options[i];
+			if(setEnabled.contains(option)) {
+				animOptions[i] = new AnimationOption(option, true);
+			}
+			else {
+				animOptions[i] = new AnimationOption(option, false);
+			}
+		}
+		return animOptions;
 	}
 }

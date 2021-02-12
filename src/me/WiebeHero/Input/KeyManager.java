@@ -3,21 +3,29 @@ package me.WiebeHero.Input;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import me.WiebeHero.Settings.Settings;
+
 public class KeyManager implements KeyListener{
 	
 	private boolean[] keys;
 	public boolean up, down, left, right, sprint;
+	public boolean aUp, aDown, aLeft, aRight;
 	
 	public KeyManager() {
 		this.keys = new boolean[256];
 	}
 	
 	public void tick() {
-		this.up = this.keys[KeyEvent.VK_W];
-		this.left = this.keys[KeyEvent.VK_A];
-		this.right = this.keys[KeyEvent.VK_D];
-		this.down = this.keys[KeyEvent.VK_S];
-		this.sprint = this.keys[KeyEvent.VK_SHIFT];
+		this.up = this.keys[Settings.up];
+		this.left = this.keys[Settings.left];
+		this.right = this.keys[Settings.right];
+		this.down = this.keys[Settings.down];
+		this.sprint = this.keys[Settings.sprint];
+		
+		this.aUp = this.keys[Settings.aUp];
+		this.aDown = this.keys[Settings.aDown];
+		this.aLeft = this.keys[Settings.aLeft];
+		this.aRight = this.keys[Settings.aRight];
 	}
 
 	@Override
@@ -35,6 +43,8 @@ public class KeyManager implements KeyListener{
 		
 	}
 	
-	
+	public boolean[] getKeys() {
+		return this.keys;
+	}
 	
 }

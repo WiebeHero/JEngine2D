@@ -3,10 +3,14 @@ package me.WiebeHero.UI;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-import javafx.util.Pair;
+import me.WiebeHero.InputListeners.HoverListener;
+import me.WiebeHero.InputListeners.Listener;
+import me.WiebeHero.InputListeners.PressListener;
+import me.WiebeHero.gfx.AnimType;
 import me.WiebeHero.gfx.Animation;
-import me.WiebeHero.gfx.AnimationTypes.AnimationType;
 import me.WiebeHero.gfx.MovementAnimation;
 import me.WiebeHero.gfx.SizeAnimation;
 import me.WiebeHero.gfx.SpriteAnimation;
@@ -14,51 +18,33 @@ import me.WiebeHero.gfx.SpriteAnimation;
 public class UIImageButton extends UIObject{
 
 	private BufferedImage[] images;
-	private ClickListener clicker;
-	private Animation[] anims;
+	private ArrayList<Listener> listeners;
+	private ArrayList<Animation> anims;
 	
-	public UIImageButton(float x, float y, int width, int height, BufferedImage[] images, ClickListener clicker) {
+	public UIImageButton(float x, float y, int width, int height, BufferedImage[] images) {
 		super(x, y, width, height);
 		this.images = images;
-		this.clicker = clicker;
+		this.listeners = new ArrayList<Listener>();
+		this.anims = new ArrayList<Animation>();
 	}
 	
-	public UIImageButton(float x, float y, int width, int height, BufferedImage[] images, ClickListener clicker, Animation... anims) {
-		super(x, y, width, height);
-		this.images = images;
-		this.clicker = clicker;
-		this.anims = anims;
-	}
-	
-	public UIImageButton(double marginX, double marginY, int width, int height, BufferedImage[] images, ClickListener clicker) {
+	public UIImageButton(double marginX, double marginY, int width, int height, BufferedImage[] images) {
 		super(marginX, marginY, width, height);
 		this.images = images;
-		this.clicker = clicker;
+		this.listeners = new ArrayList<Listener>();
+		this.anims = new ArrayList<Animation>();
 	}
 	
-	public UIImageButton(double marginX, double marginY, int width, int height, BufferedImage[] images, ClickListener clicker, Animation... anims) {
-		super(marginX, marginY, width, height);
+	public UIImageButton(double marginX, double marginY, int width, int height, BufferedImage[] images, UIObject inheritance) {
+		super(marginX, marginY, width, height, inheritance);
 		this.images = images;
-		this.clicker = clicker;
-		this.anims = anims;
-	}
-	
-	public UIImageButton(double marginX, double marginY, float extraX, float extraY, int width, int height, BufferedImage[] images, ClickListener clicker) {
-		super(marginX, marginY, extraX, extraY, width, height);
-		this.images = images;
-		this.clicker = clicker;
-	}
-	
-	public UIImageButton(double marginX, double marginY, float extraX, float extraY, int width, int height, BufferedImage[] images, ClickListener clicker, Animation... anims) {
-		super(marginX, marginY, extraX, extraY, width, height);
-		this.images = images;
-		this.clicker = clicker;
-		this.anims = anims;
+		this.listeners = new ArrayList<Listener>();
+		this.anims = new ArrayList<Animation>();
 	}
 
 	@Override
 	public void tick() {
-		if(this.anims != null && this.anims.length != 0) {
+		if(this.anims != null && this.anims.size() != 0) {
 			for(Animation anim : this.anims) {
 				anim.setHovering(this.hovering);
 				anim.tick();
@@ -68,7 +54,7 @@ public class UIImageButton extends UIObject{
 	
 	@Override
 	public void render(Graphics g) {
-		if(this.anims != null && this.anims.length != 0) {
+		if(this.anims != null && this.anims.size() != 0) {
 			BufferedImage img = this.images[0];
 			Rectangle rect = this.getBounds();
 			int tempX = (int)this.x;
@@ -83,14 +69,14 @@ public class UIImageButton extends UIObject{
 						img = this.getCurrentFrame();
 						break;
 					case MOVEMENT:
-						Pair<Integer, Integer> pair = this.getCurrentOffsets();
-						xOffset = pair.getKey();
-						yOffset = pair.getValue();
+						int pair[] = this.getCurrentOffsets();
+						xOffset = pair[0];
+						yOffset = pair[1];
 						break;
 					case SIZE:
 						pair = this.getCurrentSizes();
-						widthOffset = pair.getKey();
-						heightOffset = pair.getValue();
+						widthOffset = pair[0];
+						heightOffset = pair[1];
 						break;
 				}
 			}
@@ -108,9 +94,9 @@ public class UIImageButton extends UIObject{
 	}
 	
 	public BufferedImage getCurrentFrame() {
-		if(this.anims != null && this.anims.length != 0) {
+		if(this.anims != null && this.anims.size() != 0) {
 			for(Animation a : this.anims) {
-				if(a.getAnimationType() == AnimationType.SPRITE) {
+				if(a.getAnimationType() == AnimType.SPRITE) {
 					SpriteAnimation anim = (SpriteAnimation) a;
 					return anim.getCurrentFrame();
 				}
@@ -119,62 +105,69 @@ public class UIImageButton extends UIObject{
 		return null;
 	}
 	
-	public Pair<Integer, Integer> getCurrentOffsets() {
-		if(this.anims != null && this.anims.length != 0) {
+	public int[] getCurrentOffsets() {
+		if(this.anims != null && this.anims.size() != 0) {
 			for(Animation a : this.anims) {
-				if(a.getAnimationType() == AnimationType.MOVEMENT) {
+				if(a.getAnimationType() == AnimType.MOVEMENT) {
 					MovementAnimation anim = (MovementAnimation) a;
-					return new Pair<Integer, Integer>((int)anim.getXOffset() * anim.getCurrentIndex(), (int)anim.getYOffset() * anim.getCurrentIndex());
+					return new int[] {(int)anim.getXOffset() * anim.getCurrentIndex(), (int)anim.getYOffset() * anim.getCurrentIndex()};
 				}
 			}
 		}
 		return null;
 	}
 	
-	public Pair<Integer, Integer> getCurrentSizes() {
-		if(this.anims != null && this.anims.length != 0) {
+	public int[] getCurrentSizes() {
+		if(this.anims != null && this.anims.size() != 0) {
 			for(Animation a : this.anims) {
-				if(a.getAnimationType() == AnimationType.SIZE) {
+				if(a.getAnimationType() == AnimType.SIZE) {
 					SizeAnimation anim = (SizeAnimation) a;
-					return new Pair<Integer, Integer>((int)anim.getWidthOffset() * anim.getCurrentIndex(), (int)anim.getHeightOffset() * anim.getCurrentIndex());
+					return new int[] {(int)anim.getWidthOffset() * anim.getCurrentIndex(), (int)anim.getHeightOffset() * anim.getCurrentIndex()};
 				}
 			}
 		}
 		return null;
 	}
-	
-//	private void animationSettings(Animation anim) {
-//		if(!anim.isLooping()) {
-//			if(anim.triggerOnHover()) {
-//				if(this.hovering) {
-//					anim.setReversed(false);
-//					if(anim.isOnLastIndex()) {
-//						anim.setPaused(true);
-//					}
-//					else {
-//						anim.setPaused(false);
-//					}
-//				}
-//				else {
-//					anim.setReversed(true);
-//					if(anim.isOnFirstIndex()) {
-//						anim.setPaused(true);
-//					}
-//					else {
-//						anim.setPaused(false);
-//					}
-//				}
-//			}
-//		}
-//	}
 
 	@Override
-	public void onClick() {
-		this.clicker.onClick();
+	public void onPress() {
+		for(Listener listener : this.listeners) {
+			if(listener instanceof PressListener) {
+				listener.listen();
+			}
+		}
+	}
+	
+	@Override
+	public void onHover() {
+		for(Listener listener : this.listeners) {
+			if(listener instanceof HoverListener) {
+				listener.listen();
+			}
+		}
+	}
+	
+	@Override
+	public void onDrag() {
+		
+	}
+	
+	@Override
+	public void onRelease() {
+		
 	}
 	
 	public Animation getAnimation(int index) {
-		return this.anims[index];
+		return this.anims.get(index);
 	}
+	
+	public void addAnimations(Animation... animations) {
+		this.anims.addAll(Arrays.asList(animations));
+	}
+	
+	public void addListeners(Listener... listeners) {
+		this.listeners.addAll(Arrays.asList(listeners));
+	}
+
 	
 }

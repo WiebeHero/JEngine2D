@@ -1,38 +1,39 @@
 package me.WiebeHero.gfx;
 
 import me.WiebeHero.Entities.Entity;
+import me.WiebeHero.Main.Game;
 import me.WiebeHero.Main.Handler;
 import me.WiebeHero.Tiles.Tile;
 
 public class GameCamera {
 	
-	private Handler handler;
 	private float xOffset, yOffset;
 	
-	public GameCamera(Handler handler, float xOffset, float yOffset) {
-		this.handler = handler;
+	public GameCamera(float xOffset, float yOffset) {
 		this.xOffset = xOffset;
 		this.yOffset = yOffset;
 	}
 	
 	public void checkBlankSpace() {
+		Handler handler = Game.handler;
 		if(this.xOffset < 0) {
 			this.xOffset = 0;
 		}
-		else if(this.xOffset > this.handler.getWorld().getWidth() * Tile.TILEWIDTH - this.handler.getWidth()) {
-			this.xOffset = this.handler.getWorld().getWidth() * Tile.TILEWIDTH - this.handler.getWidth();
+		else if(this.xOffset > handler.getWorld().getWidth() * Tile.TILEWIDTH - handler.getWidth()) {
+			this.xOffset = handler.getWorld().getWidth() * Tile.TILEWIDTH - handler.getWidth();
 		}
 		if(this.yOffset < 0) {
 			this.yOffset = 0;
 		}
-		else if(this.yOffset > this.handler.getWorld().getHeight() * Tile.TILEHEIGHT - this.handler.getHeight()) {
-			this.yOffset = this.handler.getWorld().getHeight() * Tile.TILEHEIGHT - this.handler.getHeight();
+		else if(this.yOffset > handler.getWorld().getHeight() * Tile.TILEHEIGHT - handler.getHeight()) {
+			this.yOffset = handler.getWorld().getHeight() * Tile.TILEHEIGHT - handler.getHeight();
 		}
 	}
 	
 	public void centerOnEntity(Entity entity) {
-		this.xOffset = entity.getX() - this.handler.getWidth() / 2 + entity.getWidth() / 2;
-		this.yOffset = entity.getY() - this.handler.getHeight() / 2 + entity.getHeight() / 2;
+		Handler handler = Game.handler;
+		this.xOffset = entity.getX() - handler.getWidth() / 2 + entity.getWidth() / 2;
+		this.yOffset = entity.getY() - handler.getHeight() / 2 + entity.getHeight() / 2;
 		this.checkBlankSpace();
 		
 	}

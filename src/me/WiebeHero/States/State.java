@@ -2,8 +2,6 @@ package me.WiebeHero.States;
 
 import java.awt.Graphics;
 
-import me.WiebeHero.Main.Handler;
-
 public abstract class State {
 	
 	private static State currentState = null;
@@ -18,11 +16,7 @@ public abstract class State {
 	
 	//CLASS
 	
-	protected Handler handler;
-	
-	public State(Handler handler) {
-		this.handler = handler;
-	}
+	public abstract void initMouseManager();
 	
 	public abstract void tick();
 	

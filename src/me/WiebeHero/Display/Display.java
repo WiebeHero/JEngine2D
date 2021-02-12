@@ -2,6 +2,8 @@ package me.WiebeHero.Display;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
@@ -28,12 +30,14 @@ public class Display {
 		this.frame.setResizable(true);
 		this.frame.setLocationRelativeTo(null);
 		this.frame.setVisible(true);
-		this.frame.setMinimumSize(new Dimension(640, 400));
+		this.frame.setMinimumSize(new Dimension(840, 520));
+		Image img = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/icons/TitleIconRes.png"));
+		this.frame.setIconImage(img);
 		
 		this.canvas = new Canvas();
 		this.canvas.setPreferredSize(new Dimension(this.width, this.height));
 		this.canvas.setMaximumSize(new Dimension(this.width, this.height));
-		this.canvas.setMinimumSize(new Dimension(640, 400));
+		this.canvas.setMinimumSize(new Dimension(840, 520));
 		this.canvas.setFocusable(false);
 		
 		this.frame.add(this.canvas);

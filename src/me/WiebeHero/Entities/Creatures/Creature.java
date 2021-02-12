@@ -1,22 +1,21 @@
-package me.WiebeHero.Entities;
+package me.WiebeHero.Entities.Creatures;
 
-import me.WiebeHero.Main.Handler;
+import me.WiebeHero.Entities.Direction;
+import me.WiebeHero.Entities.Entity;
+import me.WiebeHero.Main.Game;
 import me.WiebeHero.Tiles.Tile;
 
 public abstract class Creature extends Entity{
 	
-	public static final int DEFAULT_HEALTH = 10;
 	public static final float DEFAULT_SPEED = 2.4F;
 	public static final int DEFAULT_CREATURE_WIDTH = 64, DEFAULT_CREATURE_HEIGHT = 64;
 	
 	protected Direction dir;
-	protected int health;
 	protected float speed;
 	protected float xMove, yMove;
 
-	public Creature(Handler handler, float x, float y, int width, int height) {
-		super(handler, x, y, width, height);
-		this.health = DEFAULT_HEALTH;
+	public Creature(float x, float y, int width, int height) {
+		super(x, y, width, height);
 		this.speed = DEFAULT_SPEED;
 		this.xMove = 0.0F;
 		this.yMove = 0.0F;
@@ -87,7 +86,7 @@ public abstract class Creature extends Entity{
 	}
 	
 	protected boolean collisionWithTile(int x, int y) {
-		return this.handler.getWorld().getTile(x, y).isSolid();
+		return Game.handler.getWorld().getTile(x, y).isSolid();
 	}
 	
 	//GETTERS AND SETTERS
@@ -105,14 +104,6 @@ public abstract class Creature extends Entity{
 
 	public void setyMove(float yMove) {
 		this.yMove = yMove;
-	}
-
-	public int getHealth() {
-		return this.health;
-	}
-
-	public void setHealth(int health) {
-		this.health = health;
 	}
 
 	public float getSpeed() {

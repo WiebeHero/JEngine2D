@@ -1,7 +1,5 @@
 package me.WiebeHero.gfx;
 
-import me.WiebeHero.gfx.AnimationTypes.AnimationType;
-
 public class SizeAnimation extends Animation{
 	
 	private int widthOffset, heightOffset;
@@ -16,11 +14,11 @@ public class SizeAnimation extends Animation{
 	 * @param heightOffset | The offset of the height, it can be positive or negative.
 	 * @param options | Options for the animation. 0 = PAUSED | 1 = REVERSED | 2 = LOOP | 3 = HOVER TRIGGER
 	 */
-	public SizeAnimation(int speed, int max, int widthOffset, int heightOffset, boolean... options) {
+	public SizeAnimation(int speed, int max, int widthOffset, int heightOffset, AnimOption... options) {
 		super(speed, max, options);
 		this.widthOffset = widthOffset;
 		this.heightOffset = heightOffset;
-		this.setAnimationType(AnimationType.SIZE);
+		this.setAnimationType(AnimType.SIZE);
 	}
 	
 	/**
