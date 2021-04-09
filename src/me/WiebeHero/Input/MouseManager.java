@@ -6,91 +6,72 @@ import java.awt.event.MouseMotionListener;
 
 import me.WiebeHero.UI.UIManager;
 
-public class MouseManager implements MouseListener, MouseMotionListener{
+public abstract class MouseManager implements MouseListener, MouseMotionListener{
 
-	private boolean leftPressed, rightPressed;
-	public static int mouseX, mouseY;
-	private UIManager uiManager;
-	
+	protected UIManager uiManager;
+	/**
+	 * A constructor for the MouseManager. Cannot be called normally due to it
+	 * being an abstract class. Empty constructor.
+	 */
 	public MouseManager() {
 		
 	}
-	
+	/**
+	 * A setter that couples the UIManager to this class.
+	 * @param uiManager | UIManager.
+	 */
 	public void setUIManager(UIManager uiManager) {
 		this.uiManager = uiManager;
 	}
-	
-	// Getters
-	
-	public boolean isLeftPressed() {
-		return this.leftPressed;
+	/**
+	 * A getter that returns the UIManager coupled to this class.
+	 * @return uiManager | UIManager.
+	 */
+	public UIManager getUIManager() {
+		return this.uiManager;
 	}
-	
-	public boolean isRightPressed() {
-		return this.rightPressed;
-	}
-	
-	// Implemented methods
-	
+	/**
+	 * An abstract void that is called when the mouse is holding a button and moving
+	 * at the same time. Mouse Dragging!
+	 * @param event | MouseEvent.
+	 */
 	@Override
-	public void mouseDragged(MouseEvent event) {
-		mouseX = event.getX();
-		mouseY = event.getY();
-		if(this.uiManager != null) {
-			this.uiManager.onMouseDrag(event);
-		}
-	}
+	public abstract void mouseDragged(MouseEvent event);
+	/**
+	 * An abstract void that is called when the mouse is moved. Mouse Moving!
+	 * @param event | MouseEvent
+	 */
+	@Override
+	public abstract void mouseMoved(MouseEvent event);
+	/**
+	 * An abstract void that is called when the mouse presses and releases a button.
+	 * Mouse Clicking!
+	 * @param event | MouseEvent
+	 */
+	@Override
+	public abstract void mouseClicked(MouseEvent event);
+	/**
+	 * An abstract void that is called when the mouse enters the window. Mouse Entering!
+	 * @param event | MouseEvent
+	 */
+	@Override
+	public abstract void mouseEntered(MouseEvent event);
+	/**
+	 * An abstract void that is called when the mouse exits the window. Mouse Exiting!
+	 * @param event | MouseEvent
+	 */
+	@Override
+	public abstract void mouseExited(MouseEvent event);
+	/**
+	 * An abstract void that is called when a mouse button is pressed! Mouse Pressing!
+	 * @param event | MouseEvent
+	 */
+	@Override
+	public abstract void mousePressed(MouseEvent event);
+	/**
+	 * An abstract void that is called when a mouse button is released! Mouse Releasing!
+	 */
+	@Override
+	public abstract void mouseReleased(MouseEvent event);
 
-	@Override
-	public void mouseMoved(MouseEvent event) {
-		mouseX = event.getX();
-		mouseY = event.getY();
-		if(this.uiManager != null) {
-			this.uiManager.onMouseMove(event);
-		}
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent event) {
-		if(event.getButton() == MouseEvent.BUTTON1) {
-			this.leftPressed = true;
-		}
-		else if(event.getButton() == MouseEvent.BUTTON3) {
-			this.rightPressed = true;
-		}
-		if(this.uiManager != null) {
-			this.uiManager.onMousePress(event);
-		}
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent event) {
-		if(event.getButton() == MouseEvent.BUTTON1) {
-			this.leftPressed = false;
-		}
-		else if(event.getButton() == MouseEvent.BUTTON3) {
-			this.rightPressed = false;
-		}
-		if(this.uiManager != null) {
-			this.uiManager.onMouseRelease(event);
-		}
-	}
 }

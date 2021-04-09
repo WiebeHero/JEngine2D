@@ -15,6 +15,12 @@ public class Display {
 	private String title;
 	private int width, height;
 	
+	/**
+	 * Constructor for the display class.
+	 * @param title 	| Title of the window.
+	 * @param width		| Width of the window.
+	 * @param height	| Height of the window.
+	 */
 	public Display(String title, int width, int height) {
 		this.title = title;
 		this.width = width;
@@ -22,7 +28,10 @@ public class Display {
 		
 		this.createDisplay();
 	}
-	
+	/**
+	 * Runs when called in the constructor, basically the builder for the
+	 * window.
+	 */
 	private void createDisplay() {
 		this.frame = new JFrame(this.title);
 		this.frame.setSize(this.width, this.height);
@@ -44,10 +53,17 @@ public class Display {
 		this.frame.pack();
 	}
 	
+	/**
+	 * A getter to get the Canvas.
+	 * @return Returns the Canvas, basically the thing where you draw your stuff.
+	 */
 	public Canvas getCanvas() {
 		return this.canvas;
 	}
-	
+	/**
+	 * A getter to get the JFrame.
+	 * @return Returns the Window, basically the container of the canvas.
+	 */
 	public JFrame getFrame() {
 		return this.frame;
 	}

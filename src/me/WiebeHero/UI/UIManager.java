@@ -1,26 +1,26 @@
 package me.WiebeHero.UI;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import me.WiebeHero.Main.Game;
+import me.WiebeHero.Display.Display;
 
 public class UIManager {
 	
+	private Display display;
 	private ArrayList<UIObject> objects;
 	
-	public UIManager() {
+	public UIManager(Display display) {
 		this.objects = new ArrayList<UIObject>();
-		Game.handler.getDisplay().getFrame().getRootPane().addComponentListener(new ComponentAdapter() {
+		this.display = display;
+		this.display.getFrame().getRootPane().addComponentListener(new ComponentAdapter() {
 		    public void componentResized(ComponentEvent componentEvent) {
 		    	for(UIObject object : objects) {
-		    		if(object instanceof Marginable) {
-		    			object.updateMargin();
-		    		}
+		    		object.updateMargin();
 		    	}
 		    }
 		});
@@ -28,49 +28,89 @@ public class UIManager {
 	
 	public void tick() {
 		for(UIObject o : this.objects) {
-			o.tick();
-			o.updateMargin();
-			if(o instanceof UIBox) {
-				UIBox box = (UIBox) o;
-    			for(UIObject item : box.getObjects()) {
-    				item.updateMargin();
-    			}
+			if(o.isActive()) {
+				o.tick();
 			}
 		}
 	}
 	
 	public void render(Graphics g) {
 		for(UIObject o : this.objects) {
-			o.render(g);
-			if(o instanceof UIBox) {
-				UIBox box = (UIBox) o;
-				g.setColor(Color.RED);
-				g.drawRect((int)box.getX(), (int)box.getY(), box.getWidth(), box.getHeight());
+			if(o.isActive()) {
+				o.render(g);
 			}
 		}
 	}
 	
-	public void onMouseMove(MouseEvent event) {
+	public void onMouseMoved(MouseEvent event) {
 		for(UIObject o : this.objects) {
-			o.onMouseMove(event);
+			if(!o.isActive())
+				return;
+			o.onMouseMoved(event);
 		}
 	}
 	
-	public void onMousePress(MouseEvent event) {
+	public void onMousePressed(MouseEvent event) {
 		for(UIObject o : this.objects) {
-			o.onMousePress(event);
+			if(!o.isActive())
+				return;
+			o.onMousePressed(event);
 		}
 	}
 	
-	public void onMouseRelease(MouseEvent event) {
+	public void onMouseReleased(MouseEvent event) {
 		for(UIObject o : this.objects) {
-			o.onMouseRelease(event);
+			if(!o.isActive())
+				return;
+			o.onMouseReleased(event);
 		}
 	}
 	
-	public void onMouseDrag(MouseEvent event) {
+	public void onMouseDragged(MouseEvent event) {
 		for(UIObject o : this.objects) {
-			o.onMouseDrag(event);
+			if(!o.isActive())
+				return;
+			o.onMouseDragged(event);
+		}
+	}
+	
+	public void onMouseClicked(MouseEvent event) {
+		for(UIObject o : this.objects) {
+			if(!o.isActive())
+				return;
+			o.onMouseClicked(event);
+		}
+	}
+	
+	public void onMouseEntered(MouseEvent event) {
+		for(UIObject o : this.objects) {
+			if(!o.isActive())
+				return;
+			o.onMouseEntered(event);
+		}
+	}
+	
+	public void onMouseExited(MouseEvent event) {
+		for(UIObject o : this.objects) {
+			if(!o.isActive())
+				return;
+			o.onMouseExited(event);
+		}
+	}
+	
+	public void onKeyPressed(KeyEvent event) {
+		for(UIObject o : this.objects) {
+			if(!o.isActive())
+				return;
+			o.onKeyPressed(event);
+		}
+	}
+	
+	public void onKeyReleased(KeyEvent event) {
+		for(UIObject o : this.objects) {
+			if(!o.isActive())
+				return;
+			o.onKeyReleased(event);
 		}
 	}
 	

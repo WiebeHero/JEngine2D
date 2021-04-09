@@ -3,40 +3,37 @@ package me.WiebeHero.Tiles;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-public class Tile {
-	
-	//STATIC STUFF HERE
-	
-	public static Tile[] tiles = new Tile[256];
-	public static Tile grassTile = new GrassTile(0);
-	public static Tile dirtTile = new DirtTile(1);
+public abstract class Tile {
 	
 	//CLASS
 	
-	public static final int TILEWIDTH = 64, TILEHEIGHT = 64;
-	
 	protected BufferedImage texture;
 	protected final int id;
-	
+	/**
+	 * The constructor for the Tile class, can normally not be called since it
+	 * is an abstract class.
+	 * @param texture | Image for the Tile.
+	 * @param id | Id for the Tile.
+	 */
 	public Tile(BufferedImage texture, int id) {
 		this.texture = texture;
 		this.id = id;
-		
-		tiles[id] = this;
 	}
-	
-	public void tick() {
-		
-	}
-	
-	public void render(Graphics g, int x, int y) {
-		g.drawImage(this.texture, x, y, TILEWIDTH, TILEHEIGHT, null);
-	}
-	
-	public boolean isSolid() {
-		return false;
-	}
-	
+	/**
+	 * A method that is called every frame.
+	 */
+	public abstract void tick();
+	/**
+	 * A method that manages rendering the tile to the screen.
+	 * @param g | Graphics.
+	 * @param x | X Position of the tile.
+	 * @param y | Y Position of the tile.
+	 */
+	public abstract void render(Graphics g, int x, int y);
+	/**
+	 * A getter to get the ID of the Tile.
+	 * @return
+	 */
 	public int getId() {
 		return this.id;
 	}

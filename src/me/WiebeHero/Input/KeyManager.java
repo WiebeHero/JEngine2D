@@ -3,46 +3,60 @@ package me.WiebeHero.Input;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import me.WiebeHero.Settings.Settings;
+import me.WiebeHero.UI.UIManager;
 
-public class KeyManager implements KeyListener{
+public abstract class KeyManager implements KeyListener{
 	
-	private boolean[] keys;
-	public boolean up, down, left, right, sprint;
-	public boolean aUp, aDown, aLeft, aRight;
-	
+	protected boolean[] keys;
+
+	protected UIManager uiManager;
+	/**
+	 * A constructor that cannot be called regularly, since the KeyManager is an
+	 * abstract class. It instantiates the keys array.
+	 */
 	public KeyManager() {
 		this.keys = new boolean[256];
 	}
-	
-	public void tick() {
-		this.up = this.keys[Settings.up];
-		this.left = this.keys[Settings.left];
-		this.right = this.keys[Settings.right];
-		this.down = this.keys[Settings.down];
-		this.sprint = this.keys[Settings.sprint];
-		
-		this.aUp = this.keys[Settings.aUp];
-		this.aDown = this.keys[Settings.aDown];
-		this.aLeft = this.keys[Settings.aLeft];
-		this.aRight = this.keys[Settings.aRight];
+	/**
+	 * A setter that couples the UIManager to this class.
+	 * @param uiManager | UIManager.
+	 */
+	public void setUIManager(UIManager uiManager) {
+		this.uiManager = uiManager;
 	}
-
+	/**
+	 * A getter that returns the UIManager coupled to this class.
+	 * @return uiManager | UIManager.
+	 */
+	public UIManager getUIManager() {
+		return this.uiManager;
+	}
+	/**
+	 * This is a method that gets called every frame.
+	 */
+	public abstract void tick();
+	/**
+	 * A method that is called when a key is pressed.
+	 * @param event | KeyEvent.
+	 */
 	@Override
-	public void keyPressed(KeyEvent event) {
-		this.keys[event.getKeyCode()] = true;
-	}
-
+	public abstract void keyPressed(KeyEvent event);
+	/**
+	 * A method that is called when a key is released.
+	 * @param event | KeyEvent.
+	 */
 	@Override
-	public void keyReleased(KeyEvent event) {
-		this.keys[event.getKeyCode()] = false;
-	}
-
+	public abstract void keyReleased(KeyEvent event);
+	/**
+	 * A method that is called when a key is typed.
+	 * @param event | KeyEvent.
+	 */
 	@Override
-	public void keyTyped(KeyEvent event) {
-		
-	}
-	
+	public abstract void keyTyped(KeyEvent event);
+	/**
+	 * A getter that returns an array with keys. With the state of being pressed or not.
+	 * @return keys
+	 */
 	public boolean[] getKeys() {
 		return this.keys;
 	}

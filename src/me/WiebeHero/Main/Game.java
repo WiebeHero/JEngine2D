@@ -1,128 +1,106 @@
 package me.WiebeHero.Main;
 
-import java.awt.Graphics;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BufferStrategy;
-
 import me.WiebeHero.Display.Display;
 import me.WiebeHero.Input.KeyManager;
 import me.WiebeHero.Input.MouseManager;
-import me.WiebeHero.Settings.Settings;
-import me.WiebeHero.Sounds.Sounds;
-import me.WiebeHero.States.FightState;
-import me.WiebeHero.States.GameState;
-import me.WiebeHero.States.MenuState;
-import me.WiebeHero.States.SettingsState;
-import me.WiebeHero.States.State;
-import me.WiebeHero.gfx.Assets;
-import me.WiebeHero.gfx.GameCamera;
+import me.WiebeHero.Internal.FPSManager;
+import me.WiebeHero.States.StateManager;
+import me.WiebeHero.gfx.Screen;
 
-public class Game implements Runnable{
+public abstract class Game implements Runnable{
 	
-	private Display display;
-	private int width, height;
+	protected Display display;
 	public String title;
 	
 	private boolean running = false;
 	private Thread thread;
 	
-	private BufferStrategy bs;
-	private Graphics g;
+//	private BufferStrategy bs;
+//	private Graphics g;
+	
+	//Screen
+	protected Screen screen;
 	
 	//States
-	public State gameState;
-	public State menuState;
-	public State settingsState;
-	public State fightState;
+	protected StateManager stateManager;
 	
 	//Input
-	private KeyManager keyManager;
-	private MouseManager mouseManager;
-	
-	//Camera
-	private GameCamera gameCamera;
-	
-	//Handler
-	public static Handler handler;
-	
-	public Game(String title, int width, int height) {
-		this.width = width;
-		this.height = height;
+	protected KeyManager keyManager;
+	protected MouseManager mouseManager;
+	/**
+	 * A constructor for the Game class, cannot be instantiated on it's own due to it
+	 * being an abstract class. Initializes the Title, Width, Height, KeyManager and MouseManager.
+	 * @param title
+	 * @param width
+	 * @param height
+	 * @param keyManager
+	 * @param mouseManager
+	 */
+	public Game(String title, int width, int height, KeyManager keyManager, MouseManager mouseManager) {
+		this.screen = new Screen(width, height);
+		this.keyManager = keyManager;
+		this.mouseManager = mouseManager;
 		this.title = title;
-		this.keyManager = new KeyManager();
-		this.mouseManager = new MouseManager();
 	}
+	/**
+	 * A method that is called when the game runs. (Game.run())
+	 */
+	protected abstract void init();
+//		this.display = new Display(this.title, screen.getWidth(), screen.getHeight());
+//		this.display.getFrame().addMouseListener(this.mouseManager);
+//		this.display.getFrame().addMouseMotionListener(this.mouseManager);
+//		this.display.getFrame().getRootPane().addComponentListener(new ComponentAdapter() {
+//			
+//		    public void componentResized(ComponentEvent componentEvent) {
+//		    	screen.resize(display.getFrame().getWidth() - 16, display.getFrame().getHeight() - 39);
+//		    }
+//		    
+//		});
+//		this.display.getCanvas().addMouseListener(this.mouseManager);
+//		this.display.getCanvas().addMouseMotionListener(this.mouseManager);
+//		this.stateManager = StateManager.getInstance();
+//		this.endInit();
+	/**
+	 * A method that is called every frame. Used to tick other objects.
+	 */
+	protected abstract void tick();
+//		this.keyManager.tick();
+//		
+//		if(this.stateManager.getState() != null) {
+//			this.stateManager.getState().tick();
+//		}
+		
+	/**
+	 * A method that is called every frame. Used to render other objects.
+	 */
+	protected abstract void render();
+//		this.bs = this.display.getCanvas().getBufferStrategy();
+//		if(bs == null) {
+//			this.display.getCanvas().createBufferStrategy(3);
+//			return;
+//		}
+//		this.g = this.bs.getDrawGraphics();
+//		//Clear Screen
+//		this.g.clearRect(0, 0, screen.getWidth(), screen.getHeight());
+//		//Draw Here!
+//		
+//		if(this.stateManager.getState() != null) {
+//			this.stateManager.getState().render(this.g);
+//		}
+//		
+//		//End Drawing!
+//		
+//		this.bs.show();
+//		this.g.dispose();
 	
-	private void init() {
-		this.display = new Display(this.title, this.width, this.height);
-		this.display.getFrame().addKeyListener(this.keyManager);
-		this.display.getFrame().addMouseListener(this.mouseManager);
-		this.display.getFrame().addMouseMotionListener(this.mouseManager);
-		this.display.getFrame().getRootPane().addComponentListener(new ComponentAdapter() {
-		    public void componentResized(ComponentEvent componentEvent) {
-		    	width = display.getFrame().getWidth() - 16;
-		    	height = display.getFrame().getHeight() - 39;
-		    }
-		});
-		this.display.getFrame().addWindowListener(new WindowAdapter() {
-		    public void windowClosing(WindowEvent windowEvent) {
-		    	Settings.saveSettings();
-		    }
-		});
-		this.display.getCanvas().addMouseListener(this.mouseManager);
-		this.display.getCanvas().addMouseMotionListener(this.mouseManager);
-		Assets.init();
-		Sounds.init();
-		Settings.loadSettings();
-		Game.handler = new Handler(this);
-		this.gameCamera = new GameCamera(0, 0);
-		this.gameState = new GameState();
-		this.menuState = new MenuState();
-		this.menuState.initMouseManager();
-		this.fightState = new FightState();
-		this.settingsState = new SettingsState();
-		State.setState(this.menuState);
-	}
-	
-	private void tick() {
-		this.keyManager.tick();
-		
-		if(State.getState() != null) {
-			State.getState().tick();
-		}
-		
-	}
-	
-	private void render() {
-		this.bs = this.display.getCanvas().getBufferStrategy();
-		if(bs == null) {
-			this.display.getCanvas().createBufferStrategy(3);
-			return;
-		}
-		this.g = this.bs.getDrawGraphics();
-		//Clear Screen
-		this.g.clearRect(0, 0, this.width, this.height);
-		//Draw Here!
-		
-		if(State.getState() != null) {
-			State.getState().render(this.g);
-		}
-		
-		//End Drawing!
-		
-		this.bs.show();
-		this.g.dispose();
-	}
-	
+	/**
+	 * A method called when the game starts. (Game.run())
+	 */
 	public void run() {
 		
 		this.init();
 		
-		int fps = 60;
-		double timePerTick = 1000000000 / fps;
+		double timePerTick = 1000000000 / FPSManager.getFPS();
 		double delta = 0;
 		long now;
 		long lastTime = System.nanoTime();
@@ -142,31 +120,44 @@ public class Game implements Runnable{
 		this.stop();
 		
 	}
-	
+	/**
+	 * A getter that returns the KeyManager of this class.
+	 * @return keyManager | KeyManager
+	 */
 	public KeyManager getKeyManager() {
 		return this.keyManager;
 	}
-	
+	/**
+	 * A getter that returns the MouseManager of this class.
+	 * @return mouseManager | MouseManager
+	 */
 	public MouseManager getMouseManager() {
 		return this.mouseManager;
 	}
-	
-	public GameCamera getGameCamera() {
-		return this.gameCamera;
-	}
-	
+	/**
+	 * A getter that returns the Display of this class.
+	 * @return display | Display
+	 */
 	public Display getDisplay() {
 		return this.display;
 	}
-	
-	public int getWidth() {
-		return this.width;
+	/**
+	 * A getter that returns the Screen of this class.
+	 * @return screen | Screen
+	 */
+	public Screen getScreen() {
+		return this.screen;
 	}
-	
-	public int getHeight() {
-		return this.height;
+	/**
+	 * A getter that returns the StateManager of this class.
+	 * @return stateManager | StateManager
+	 */
+	public StateManager getStateManager() {
+		return this.stateManager;
 	}
-	
+	/**
+	 * A method that starts the game.
+	 */
 	public synchronized void start() {
 		if(!this.running) {
 			this.running = true;
@@ -174,7 +165,9 @@ public class Game implements Runnable{
 			this.thread.start();
 		}
 	}
-	
+	/**
+	 * A method that stops the game.
+	 */
 	public synchronized void stop() {
 		if(this.running) {
 			this.running = false;
