@@ -10,6 +10,10 @@ public abstract class State {
 	 */
 	public abstract void initMouseManager();
 	/**
+	 * A method to initialize the key manager on this state.
+	 */
+	public abstract void initKeyManager();
+	/**
 	 * A method that is called every frame to tick other objects.
 	 */
 	public abstract void tick();

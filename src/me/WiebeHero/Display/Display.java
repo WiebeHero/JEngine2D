@@ -12,7 +12,7 @@ public class Display {
 	private JFrame frame;
 	private Canvas canvas;
 	
-	private String title;
+	private String title, iconPath;
 	private int width, height;
 	
 	/**
@@ -21,8 +21,9 @@ public class Display {
 	 * @param width		| Width of the window.
 	 * @param height	| Height of the window.
 	 */
-	public Display(String title, int width, int height) {
+	public Display(String title, String iconPath, int width, int height) {
 		this.title = title;
+		this.iconPath = iconPath;
 		this.width = width;
 		this.height = height;
 		
@@ -40,7 +41,7 @@ public class Display {
 		this.frame.setLocationRelativeTo(null);
 		this.frame.setVisible(true);
 		this.frame.setMinimumSize(new Dimension(840, 520));
-		Image img = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/icons/TitleIconRes.png"));
+		Image img = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource(this.iconPath));
 		this.frame.setIconImage(img);
 		
 		this.canvas = new Canvas();

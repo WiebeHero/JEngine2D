@@ -15,9 +15,6 @@ public abstract class Game implements Runnable{
 	private boolean running = false;
 	private Thread thread;
 	
-//	private BufferStrategy bs;
-//	private Graphics g;
-	
 	//Screen
 	protected Screen screen;
 	
@@ -36,67 +33,29 @@ public abstract class Game implements Runnable{
 	 * @param keyManager
 	 * @param mouseManager
 	 */
-	public Game(String title, int width, int height, KeyManager keyManager, MouseManager mouseManager) {
+	public Game(String title, int width, int height) {
 		this.screen = new Screen(width, height);
-		this.keyManager = keyManager;
-		this.mouseManager = mouseManager;
 		this.title = title;
 	}
 	/**
 	 * A method that is called when the game runs. (Game.run())
 	 */
 	protected abstract void init();
-//		this.display = new Display(this.title, screen.getWidth(), screen.getHeight());
-//		this.display.getFrame().addMouseListener(this.mouseManager);
-//		this.display.getFrame().addMouseMotionListener(this.mouseManager);
-//		this.display.getFrame().getRootPane().addComponentListener(new ComponentAdapter() {
-//			
-//		    public void componentResized(ComponentEvent componentEvent) {
-//		    	screen.resize(display.getFrame().getWidth() - 16, display.getFrame().getHeight() - 39);
-//		    }
-//		    
-//		});
-//		this.display.getCanvas().addMouseListener(this.mouseManager);
-//		this.display.getCanvas().addMouseMotionListener(this.mouseManager);
-//		this.stateManager = StateManager.getInstance();
-//		this.endInit();
+
 	/**
 	 * A method that is called every frame. Used to tick other objects.
 	 */
 	protected abstract void tick();
-//		this.keyManager.tick();
-//		
-//		if(this.stateManager.getState() != null) {
-//			this.stateManager.getState().tick();
-//		}
 		
 	/**
 	 * A method that is called every frame. Used to render other objects.
 	 */
 	protected abstract void render();
-//		this.bs = this.display.getCanvas().getBufferStrategy();
-//		if(bs == null) {
-//			this.display.getCanvas().createBufferStrategy(3);
-//			return;
-//		}
-//		this.g = this.bs.getDrawGraphics();
-//		//Clear Screen
-//		this.g.clearRect(0, 0, screen.getWidth(), screen.getHeight());
-//		//Draw Here!
-//		
-//		if(this.stateManager.getState() != null) {
-//			this.stateManager.getState().render(this.g);
-//		}
-//		
-//		//End Drawing!
-//		
-//		this.bs.show();
-//		this.g.dispose();
 	
 	/**
 	 * A method called when the game starts. (Game.run())
 	 */
-	public void run() {
+	public final void run() {
 		
 		this.init();
 		
